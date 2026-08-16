@@ -12,12 +12,14 @@ public interface TaskService {
 
     List<TaskResponseDto> getAllTasks();
 
+    List<TaskResponseDto> getTasksByEmployee(Long employeeId);
+
     TaskResponseDto getTaskById(Long id);
 
     TaskResponseDto updateTask(Long id, TaskRequestDto requestDto);
 
     void deleteTask(Long id);
-    
+
     TaskResponseDto assignEmployeeToTask(
             Long taskId,
             Long employeeId
@@ -27,10 +29,9 @@ public interface TaskService {
             Long taskId,
             Long managerId
     );
-    
+
     TaskResponseDto updateTaskStatus(
             Long taskId,
             TaskStatusUpdateDto statusDto
     );
-
 }

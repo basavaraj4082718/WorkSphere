@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
 
 
 
@@ -38,13 +39,17 @@ public class Employee {
 	
 	@OneToMany(mappedBy = "employee")
 	private List<LeaveRequest> leaveRequests;
+
+	@OneToOne
+	@JoinColumn(name = "user_id", unique = true)
+	private User user;
 	
 	
 	public Employee() {
 		
 	}
 	public Employee(Long id, String employeeCode, String firstName, String lastName, String email, String department,
-			String designation) {
+			String designation, User user) {
 		super();
 		this.id = id;
 		this.employeeCode = employeeCode;
@@ -53,9 +58,10 @@ public class Employee {
 		this.email = email;
 		this.department = department;
 		this.designation = designation;
+		this.user = user;
 	}
-	
-	
+
+
 	public Long getId() {
 		return id;
 	}
@@ -105,27 +111,35 @@ public class Employee {
 	public void setManager(Manager manager) {
 	    this.manager = manager;
 	}
-	
+
 	public List<Task> getTasks() {
 		return tasks;
 	}
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
 	}
-	
-	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

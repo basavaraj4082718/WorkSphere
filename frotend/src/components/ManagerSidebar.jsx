@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-const Sidebar = () => {
+const ManagerSidebar = () => {
 
     const linkClass = ({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
@@ -10,11 +10,12 @@ const Sidebar = () => {
         }`;
 
     return (
+
         <aside className="w-64 bg-gray-950 text-white min-h-screen p-5 flex flex-col">
 
             {/* =========================
-          LOGO
-      ========================= */}
+                LOGO
+            ========================= */}
 
             <div className="mb-10">
 
@@ -42,20 +43,20 @@ const Sidebar = () => {
 
 
             {/* =========================
-          NAVIGATION
-      ========================= */}
+                NAVIGATION
+            ========================= */}
 
             <nav className="space-y-2">
 
                 <p className="text-xs uppercase tracking-wider text-gray-500 px-4 mb-3">
-                    Main Menu
+                    Manager Portal
                 </p>
 
 
                 {/* Dashboard */}
 
                 <NavLink
-                    to="/admin/dashboard"
+                    to="/manager/dashboard"
                     className={linkClass}
                 >
                     <span>📊</span>
@@ -63,32 +64,21 @@ const Sidebar = () => {
                 </NavLink>
 
 
-                {/* Employees */}
+                {/* My Team */}
 
                 <NavLink
-                    to="/admin/employees"
+                    to="/manager/team"
                     className={linkClass}
                 >
                     <span>👥</span>
-                    <span>Employees</span>
-                </NavLink>
-
-
-                {/* Managers */}
-
-                <NavLink
-                    to="/admin/managers"
-                    className={linkClass}
-                >
-                    <span>👔</span>
-                    <span>Managers</span>
+                    <span>My Team</span>
                 </NavLink>
 
 
                 {/* Tasks */}
 
                 <NavLink
-                    to="/admin/tasks"
+                    to="/manager/tasks"
                     className={linkClass}
                 >
                     <span>📋</span>
@@ -96,22 +86,33 @@ const Sidebar = () => {
                 </NavLink>
 
 
-                {/* Reviews */}
+                {/* Attendance */}
 
                 <NavLink
-                    to="/admin/reviews"
+                    to="/manager/attendance"
                     className={linkClass}
                 >
-                    <span>⭐</span>
-                    <span>Reviews</span>
+                    <span>🕐</span>
+                    <span>Attendance</span>
+                </NavLink>
+
+
+                {/* Leave Requests */}
+
+                <NavLink
+                    to="/manager/leaves"
+                    className={linkClass}
+                >
+                    <span>📅</span>
+                    <span>Leave Requests</span>
                 </NavLink>
 
             </nav>
 
 
             {/* =========================
-          BOTTOM
-      ========================= */}
+                BOTTOM
+            ========================= */}
 
             <div className="mt-auto">
 
@@ -120,7 +121,7 @@ const Sidebar = () => {
                     <div className="px-4">
 
                         <p className="text-xs text-gray-500">
-                            System
+                            Manager Portal
                         </p>
 
                         <p className="text-sm text-gray-400 mt-1">
@@ -137,4 +138,4 @@ const Sidebar = () => {
     );
 };
 
-export default Sidebar;
+export default ManagerSidebar;

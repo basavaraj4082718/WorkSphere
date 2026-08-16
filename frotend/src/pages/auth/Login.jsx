@@ -10,6 +10,8 @@ function Login() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,88 +22,171 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/login",
-        formData
+          "http://localhost:8080/auth/login",
+          formData
+      );
+
+      // =========================
+      // STORE LOGIN INFORMATION
+      // =========================
+
+      localStorage.setItem(
+          "token",
+          response.data.token
       );
 
       localStorage.setItem(
-        "token",
-        response.data.token
+          "role",
+          response.data.role
       );
 
+      // Store email so Manager/Employee
+      // dashboards can identify the user
       localStorage.setItem(
-        "role",
-        response.data.role
+          "email",
+          formData.email
       );
 
       alert("Login Successful");
 
+      // =========================
+      // REDIRECT BASED ON ROLE
+      // =========================
+
       if (response.data.role === "ADMIN") {
+
         navigate("/admin");
+
       } else if (response.data.role === "MANAGER") {
+
         navigate("/manager");
-      } else {
+
+      } else if (response.data.role === "EMPLOYEE") {
+
         navigate("/employee");
+
+      } else {
+
+        alert("Unknown user role");
+
       }
 
     } catch (error) {
-      console.log(error);
-      alert("Invalid Credentials");
+
+      console.log("LOGIN ERROR:", error);
+
+      console.log("STATUS:", error.response?.status);
+
+      console.log("DATA:", error.response?.data);
+
+      console.log("MESSAGE:", error.message);
+
+      alert(
+          `Login failed\n\nStatus: ${
+              error.response?.status || "No response"
+          }\n\nError: ${
+              typeof error.response?.data === "string"
+                  ? error.response.data
+                  : JSON.stringify(error.response?.data)
+          }`
+      );
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-slate-100">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-[400px]">
+      <div className="min-h-screen flex justify-center items-center bg-slate-100">
 
-        <h1 className="text-3xl font-bold text-center mb-6">
-          Login
-        </h1>
+        <div className="bg-white shadow-lg rounded-xl p-8 w-[400px]">
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter Email"
-            className="w-full border p-3 rounded"
-            value={formData.email}
-            onChange={handleChange}
-          />
+          {/* =========================
+            TITLE
+        ========================= */}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter Password"
-            className="w-full border p-3 rounded"
-            value={formData.password}
-            onChange={handleChange}
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700"
-          >
+          <h1 className="text-3xl font-bold text-center mb-6">
             Login
-          </button>
-        </form>
+          </h1>
 
-        <p className="text-center mt-4">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-blue-600"
+
+          {/* =========================
+            LOGIN FORM
+        ========================= */}
+
+          <form
+              onSubmit={handleSubmit}
+              className="space-y-4"
           >
-            Register
-          </Link>
-        </p>
+
+            {/* EMAIL */}
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter Email"
+                className="w-full border p-3 rounded"
+                value={formData.email}
+                onChange={handleChange}
+                required
+            />
+
+
+            {/* PASSWORD */}
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter Password"
+                className="w-full border p-3 rounded"
+                value={formData.password}
+                onChange={handleChange}
+                required
+            />
+
+
+            {/* LOGIN BUTTON */}
+
+            <button
+                type="submit"
+                disabled={loading}
+                className={`w-full text-white p-3 rounded transition ${
+                    loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700"
+                }`}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+
+          </form>
+
+
+          {/* =========================
+            REGISTER LINK
+        ========================= */}
+
+          <p className="text-center mt-4">
+
+            Don't have an account?{" "}
+
+            <Link
+                to="/register"
+                className="text-blue-600 hover:underline"
+            >
+              Register
+            </Link>
+
+          </p>
+
+        </div>
 
       </div>
-    </div>
   );
 }
 

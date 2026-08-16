@@ -149,6 +149,15 @@ public class TaskServiceImpl implements TaskService {
         return mapToDto(updatedTask);
     }
 
+    @Override
+    public List<TaskResponseDto> getTasksByEmployee(Long employeeId) {
+
+        return taskRepository.findByEmployeeId(employeeId)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
 
 
     private TaskResponseDto mapToDto(Task task) {

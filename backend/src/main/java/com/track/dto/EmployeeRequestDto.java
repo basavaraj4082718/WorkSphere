@@ -4,26 +4,33 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class EmployeeRequestDto {
+
 	@NotBlank(message = "Employee code is required")
 	private String employeeCode;
+
 	@NotBlank(message = "Firstname is required")
 	private String firstName;
+
 	@NotBlank(message = "Lastname is required")
 	private String lastName;
-	
-	
-	@NotBlank(message = "Email code is required")
-    @Email(message = "Iinvalid Email format")
+
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid Email format")
 	private String email;
-	
-	@NotBlank(message = "Department code is required")
+
+	@NotBlank(message = "Department is required")
 	private String department;
-	@NotBlank(message = "Designation code is required")
+
+	@NotBlank(message = "Designation is required")
 	private String designation;
-	
+
+	@NotBlank(message = "Password is required")
+	private String password;
+
+
 	public EmployeeRequestDto() {
-		
 	}
+
 
 	public String getEmployeeCode() {
 		return employeeCode;
@@ -33,6 +40,7 @@ public class EmployeeRequestDto {
 		this.employeeCode = employeeCode;
 	}
 
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -40,6 +48,7 @@ public class EmployeeRequestDto {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
 
 	public String getLastName() {
 		return lastName;
@@ -49,6 +58,7 @@ public class EmployeeRequestDto {
 		this.lastName = lastName;
 	}
 
+
 	public String getEmail() {
 		return email;
 	}
@@ -57,6 +67,7 @@ public class EmployeeRequestDto {
 		this.email = email;
 	}
 
+
 	public String getDepartment() {
 		return department;
 	}
@@ -64,6 +75,7 @@ public class EmployeeRequestDto {
 	public void setDepartment(String department) {
 		this.department = department;
 	}
+
 
 	public String getDesignation() {
 		return designation;
@@ -74,9 +86,11 @@ public class EmployeeRequestDto {
 	}
 
 
-	
-	
-	
-	
+	public String getPassword() {
+		return password;
+	}
 
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }

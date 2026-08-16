@@ -180,7 +180,8 @@ public class SecurityConfig {
             	        "/api/performance/**")
             	.hasAnyRole(
             	        "ADMIN",
-            	        "MANAGER"
+            	        "MANAGER",
+						"EMPLOYEE"
             	)
             	
             	//admin dashboard

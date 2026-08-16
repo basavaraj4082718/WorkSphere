@@ -103,4 +103,13 @@ public class TaskController {
                         statusDto)
         );
     }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<TaskResponseDto>> getTasksByEmployee(
+            @PathVariable Long employeeId) {
+
+        return ResponseEntity.ok(
+                taskService.getTasksByEmployee(employeeId)
+        );
+    }
 }

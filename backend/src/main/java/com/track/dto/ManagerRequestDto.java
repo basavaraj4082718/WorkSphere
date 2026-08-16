@@ -21,8 +21,13 @@ public class ManagerRequestDto {
     @NotBlank(message = "Department is required")
     private String department;
 
+    @NotBlank(message = "Password is required")
+    private String password;
+
+
     public ManagerRequestDto() {
     }
+
 
     public String getManagerCode() {
         return managerCode;
@@ -32,6 +37,7 @@ public class ManagerRequestDto {
         this.managerCode = managerCode;
     }
 
+
     public String getFirstName() {
         return firstName;
     }
@@ -39,6 +45,7 @@ public class ManagerRequestDto {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
 
     public String getLastName() {
         return lastName;
@@ -48,6 +55,7 @@ public class ManagerRequestDto {
         this.lastName = lastName;
     }
 
+
     public String getEmail() {
         return email;
     }
@@ -56,11 +64,21 @@ public class ManagerRequestDto {
         this.email = email;
     }
 
+
     public String getDepartment() {
         return department;
     }
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
