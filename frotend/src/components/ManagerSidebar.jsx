@@ -107,6 +107,17 @@ const ManagerSidebar = () => {
                     <span>Leave Requests</span>
                 </NavLink>
 
+
+                {/* Reviews */}
+
+                <NavLink
+                    to="/manager/reviews"
+                    className={linkClass}
+                >
+                    <span>⭐</span>
+                    <span>Reviews</span>
+                </NavLink>
+
             </nav>
 
 

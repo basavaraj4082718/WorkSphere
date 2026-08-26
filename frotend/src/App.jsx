@@ -20,7 +20,6 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import ManagerManagement from "./pages/admin/ManagerManagement";
 import TaskManagement from "./pages/admin/TaskManagement";
-import ReviewManagement from "./pages/admin/ReviewManagement";
 
 // =========================================
 // MANAGER
@@ -31,6 +30,7 @@ import ManagerTeam from "./pages/manager/ManagerTeam";
 import ManagerTaskManagement from "./pages/manager/ManagerTaskManagement";
 import ManagerAttendance from "./pages/manager/ManagerAttendance";
 import ManagerLeaveRequests from "./pages/manager/ManagerLeaveRequests";
+import ManagerReviews from "./pages/manager/ManagerReviews";
 
 // =========================================
 // EMPLOYEE
@@ -140,14 +140,6 @@ function App() {
                         element={<TaskManagement />}
                     />
 
-
-                    {/* Reviews */}
-
-                    <Route
-                        path="/admin/reviews"
-                        element={<ReviewManagement />}
-                    />
-
                 </Route>
 
 
@@ -207,6 +199,14 @@ function App() {
                     <Route
                         path="/manager/leaves"
                         element={<ManagerLeaveRequests />}
+                    />
+
+
+                    {/* Reviews */}
+
+                    <Route
+                        path="/manager/reviews"
+                        element={<ManagerReviews />}
                     />
 
                 </Route>
