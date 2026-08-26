@@ -18,21 +18,41 @@ public class Review {
 
     private LocalDate reviewDate;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+
+    // =========================================
+    // EMPLOYEE
+    // =========================================
 
     @ManyToOne
-    @JoinColumn(name = "manager_id")
+    @JoinColumn(name = "employee_id", nullable = true)
+    private Employee employee;
+
+
+    // =========================================
+    // MANAGER
+    // =========================================
+
+    @ManyToOne
+    @JoinColumn(name = "manager_id", nullable = true)
     private Manager manager;
+
+
+    // =========================================
+    // CONSTRUCTOR
+    // =========================================
 
     public Review() {
     }
 
-    public Review(Long id, Integer rating, String comments,
-                  LocalDate reviewDate,
-                  Employee employee,
-                  Manager manager) {
+
+    public Review(
+            Long id,
+            Integer rating,
+            String comments,
+            LocalDate reviewDate,
+            Employee employee,
+            Manager manager) {
+
         this.id = id;
         this.rating = rating;
         this.comments = comments;
@@ -40,6 +60,11 @@ public class Review {
         this.employee = employee;
         this.manager = manager;
     }
+
+
+    // =========================================
+    // GETTERS / SETTERS
+    // =========================================
 
     public Long getId() {
         return id;
@@ -49,6 +74,7 @@ public class Review {
         this.id = id;
     }
 
+
     public Integer getRating() {
         return rating;
     }
@@ -56,6 +82,7 @@ public class Review {
     public void setRating(Integer rating) {
         this.rating = rating;
     }
+
 
     public String getComments() {
         return comments;
@@ -65,6 +92,7 @@ public class Review {
         this.comments = comments;
     }
 
+
     public LocalDate getReviewDate() {
         return reviewDate;
     }
@@ -73,6 +101,7 @@ public class Review {
         this.reviewDate = reviewDate;
     }
 
+
     public Employee getEmployee() {
         return employee;
     }
@@ -80,6 +109,7 @@ public class Review {
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
+
 
     public Manager getManager() {
         return manager;

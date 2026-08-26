@@ -27,7 +27,7 @@ const ManagerTaskManagement = () => {
 
 
     // =========================================
-    // FETCH TASKS
+    // FETCH TASKS OF LOGGED-IN MANAGER'S TEAM
     // =========================================
 
     const fetchTasks = async () => {
@@ -36,23 +36,101 @@ const ManagerTaskManagement = () => {
 
             const token = localStorage.getItem("token");
 
-            const response = await axios.get(
-                "http://localhost:8080/api/tasks",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+
+            // =========================================
+            // GET LOGGED-IN MANAGER
+            // =========================================
+
+            const managerResponse = await axios.get(
+                "http://localhost:8080/api/dashboard/manager/me",
+                config
             );
 
-            setTasks(response.data);
+            const managerId =
+                managerResponse.data.managerId;
+
+
+            // =========================================
+            // GET ALL EMPLOYEES
+            // =========================================
+
+            const employeeResponse = await axios.get(
+                "http://localhost:8080/api/employees",
+                config
+            );
+
+
+            // =========================================
+            // GET ONLY THIS MANAGER'S EMPLOYEES
+            // =========================================
+
+            const myEmployees =
+                employeeResponse.data.filter(
+                    (employee) =>
+                        Number(employee.managerId) ===
+                        Number(managerId)
+                );
+
+
+            // Get employee IDs
+            const myEmployeeIds =
+                myEmployees.map(
+                    (employee) => Number(employee.id)
+                );
+
+
+            // =========================================
+            // GET ALL TASKS
+            // =========================================
+
+            const taskResponse = await axios.get(
+                "http://localhost:8080/api/tasks",
+                config
+            );
+
+
+            // =========================================
+            // KEEP ONLY MY EMPLOYEES' TASKS
+            // =========================================
+
+            const myTasks =
+                taskResponse.data.filter(
+                    (task) =>
+                        task.employeeId &&
+                        myEmployeeIds.includes(
+                            Number(task.employeeId)
+                        )
+                );
+
+
+            setTasks(myTasks);
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                "MANAGER TASK ERROR:",
+                error
+            );
+
+            console.log(
+                "STATUS:",
+                error.response?.status
+            );
+
+            console.log(
+                "DATA:",
+                error.response?.data
+            );
 
             alert(
                 error.response?.data?.message ||
+                error.response?.data ||
                 "Failed to load tasks"
             );
 
@@ -68,7 +146,8 @@ const ManagerTaskManagement = () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
             const response = await axios.get(
                 "http://localhost:8080/api/employees",
@@ -79,13 +158,47 @@ const ManagerTaskManagement = () => {
                 }
             );
 
-            setEmployees(response.data);
+
+            // =========================================
+            // GET LOGGED-IN MANAGER
+            // =========================================
+
+            const managerResponse = await axios.get(
+                "http://localhost:8080/api/dashboard/manager/me",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+
+            const managerId =
+                managerResponse.data.managerId;
+
+
+            // =========================================
+            // ONLY THIS MANAGER'S EMPLOYEES
+            // =========================================
+
+            const myEmployees =
+                response.data.filter(
+                    (employee) =>
+                        Number(employee.managerId) ===
+                        Number(managerId)
+                );
+
+
+            setEmployees(myEmployees);
 
         } catch (error) {
 
             console.log(error);
 
-            alert("Failed to load employees");
+            alert(
+                error.response?.data?.message ||
+                "Failed to load employees"
+            );
 
         }
     };
@@ -158,7 +271,8 @@ const ManagerTaskManagement = () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
             const config = {
                 headers: {
@@ -192,7 +306,7 @@ const ManagerTaskManagement = () => {
 
             resetForm();
 
-            fetchTasks();
+            await fetchTasks();
 
         } catch (error) {
 
@@ -263,7 +377,9 @@ const ManagerTaskManagement = () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
+
 
             await axios.put(
                 `http://localhost:8080/api/tasks/${assigningTask.id}/assign-employee/${selectedEmployee}`,
@@ -275,13 +391,16 @@ const ManagerTaskManagement = () => {
                 }
             );
 
+
             alert("Employee assigned successfully");
+
 
             setShowAssign(false);
             setAssigningTask(null);
             setSelectedEmployee("");
 
-            fetchTasks();
+
+            await fetchTasks();
 
         } catch (error) {
 
@@ -305,7 +424,9 @@ const ManagerTaskManagement = () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
+
 
             await axios.put(
                 `http://localhost:8080/api/tasks/${taskId}/status`,
@@ -319,7 +440,8 @@ const ManagerTaskManagement = () => {
                 }
             );
 
-            fetchTasks();
+
+            await fetchTasks();
 
         } catch (error) {
 
@@ -339,39 +461,68 @@ const ManagerTaskManagement = () => {
     // SEARCH
     // =========================================
 
-    const filteredTasks = tasks.filter((task) => {
+    const filteredTasks =
+        tasks.filter((task) => {
 
-        const value = search.toLowerCase();
+            const value =
+                search.toLowerCase();
 
-        return (
-            task.title?.toLowerCase().includes(value) ||
-            task.description?.toLowerCase().includes(value) ||
-            task.employeeName?.toLowerCase().includes(value) ||
-            task.managerName?.toLowerCase().includes(value) ||
-            task.priority?.toLowerCase().includes(value) ||
-            task.status?.toLowerCase().includes(value)
-        );
+            return (
+                task.title
+                    ?.toLowerCase()
+                    .includes(value) ||
 
-    });
+                task.description
+                    ?.toLowerCase()
+                    .includes(value) ||
+
+                task.employeeName
+                    ?.toLowerCase()
+                    .includes(value) ||
+
+                task.managerName
+                    ?.toLowerCase()
+                    .includes(value) ||
+
+                task.priority
+                    ?.toLowerCase()
+                    .includes(value) ||
+
+                task.status
+                    ?.toLowerCase()
+                    .includes(value)
+            );
+
+        });
 
 
     // =========================================
     // STATISTICS
     // =========================================
 
-    const totalTasks = tasks.length;
+    const totalTasks =
+        tasks.length;
 
-    const pendingTasks = tasks.filter(
-        task => task.status === "PENDING"
-    ).length;
 
-    const inProgressTasks = tasks.filter(
-        task => task.status === "IN_PROGRESS"
-    ).length;
+    const pendingTasks =
+        tasks.filter(
+            task =>
+                task.status === "PENDING"
+        ).length;
 
-    const completedTasks = tasks.filter(
-        task => task.status === "COMPLETED"
-    ).length;
+
+    const inProgressTasks =
+        tasks.filter(
+            task =>
+                task.status === "IN_PROGRESS"
+        ).length;
+
+
+    const completedTasks =
+        tasks.filter(
+            task =>
+                task.status === "COMPLETED"
+        ).length;
 
 
     // =========================================
@@ -690,7 +841,6 @@ const ManagerTaskManagement = () => {
 
                     <tbody>
 
-
                     {filteredTasks.map((task) => (
 
                         <tr
@@ -699,7 +849,7 @@ const ManagerTaskManagement = () => {
                         >
 
 
-                            {/* Task */}
+                            {/* TASK */}
 
                             <td className="p-4">
 
@@ -714,7 +864,7 @@ const ManagerTaskManagement = () => {
                             </td>
 
 
-                            {/* Employee */}
+                            {/* EMPLOYEE */}
 
                             <td className="p-4">
 
@@ -735,7 +885,7 @@ const ManagerTaskManagement = () => {
                             </td>
 
 
-                            {/* Priority */}
+                            {/* PRIORITY */}
 
                             <td className="p-4">
 
@@ -756,16 +906,14 @@ const ManagerTaskManagement = () => {
                             </td>
 
 
-                            {/* Deadline */}
+                            {/* DEADLINE */}
 
                             <td className="p-4">
-
                                 {task.deadline}
-
                             </td>
 
 
-                            {/* Status */}
+                            {/* STATUS */}
 
                             <td className="p-4">
 
@@ -797,7 +945,7 @@ const ManagerTaskManagement = () => {
                             </td>
 
 
-                            {/* Actions */}
+                            {/* ACTIONS */}
 
                             <td className="p-4">
 
@@ -829,7 +977,6 @@ const ManagerTaskManagement = () => {
                         </tr>
 
                     ))}
-
 
                     </tbody>
 
@@ -877,6 +1024,7 @@ const ManagerTaskManagement = () => {
                         <p className="text-gray-500 mb-4">
 
                             Task:
+
                             <span className="font-semibold text-gray-800 ml-1">
                                 {assigningTask?.title}
                             </span>
@@ -906,7 +1054,9 @@ const ManagerTaskManagement = () => {
 
                                     {employee.firstName}{" "}
                                     {employee.lastName}
+
                                     {" - "}
+
                                     {employee.employeeCode}
 
                                 </option>
@@ -947,6 +1097,7 @@ const ManagerTaskManagement = () => {
             )}
 
         </div>
+
     );
 };
 

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const ReviewManagement = () => {
+
     const [reviews, setReviews] = useState([]);
-    const [employees, setEmployees] = useState([]);
     const [managers, setManagers] = useState([]);
 
     const [showForm, setShowForm] = useState(false);
@@ -14,7 +14,6 @@ const ReviewManagement = () => {
     const [formData, setFormData] = useState({
         rating: "",
         comments: "",
-        employeeId: "",
         managerId: "",
     });
 
@@ -31,34 +30,24 @@ const ReviewManagement = () => {
     // =========================
 
     const fetchReviews = async () => {
+
         try {
+
             const response = await axios.get(
                 "http://localhost:8080/api/reviews",
                 authConfig
             );
 
             setReviews(response.data);
+
         } catch (error) {
+
             console.log(error);
-            alert("Failed to load reviews");
-        }
-    };
 
-    // =========================
-    // FETCH EMPLOYEES
-    // =========================
-
-    const fetchEmployees = async () => {
-        try {
-            const response = await axios.get(
-                "http://localhost:8080/api/employees",
-                authConfig
+            alert(
+                error.response?.data?.message ||
+                "Failed to load reviews"
             );
-
-            setEmployees(response.data);
-        } catch (error) {
-            console.log(error);
-            alert("Failed to load employees");
         }
     };
 
@@ -67,23 +56,36 @@ const ReviewManagement = () => {
     // =========================
 
     const fetchManagers = async () => {
+
         try {
+
             const response = await axios.get(
                 "http://localhost:8080/api/managers",
                 authConfig
             );
 
             setManagers(response.data);
+
         } catch (error) {
+
             console.log(error);
-            alert("Failed to load managers");
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to load managers"
+            );
         }
     };
 
+    // =========================
+    // INITIAL LOAD
+    // =========================
+
     useEffect(() => {
+
         fetchReviews();
-        fetchEmployees();
         fetchManagers();
+
     }, []);
 
     // =========================
@@ -91,6 +93,7 @@ const ReviewManagement = () => {
     // =========================
 
     const handleChange = (e) => {
+
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -102,10 +105,10 @@ const ReviewManagement = () => {
     // =========================
 
     const resetForm = () => {
+
         setFormData({
             rating: "",
             comments: "",
-            employeeId: "",
             managerId: "",
         });
 
@@ -113,18 +116,23 @@ const ReviewManagement = () => {
     };
 
     // =========================
-    // CREATE REVIEW
+    // CREATE MANAGER REVIEW
     // =========================
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
         try {
+
             const requestData = {
                 rating: Number(formData.rating),
                 comments: formData.comments,
-                employeeId: Number(formData.employeeId),
                 managerId: Number(formData.managerId),
+
+                // Admin is reviewing a manager,
+                // so there is no employee.
+                employeeId: null,
             };
 
             await axios.post(
@@ -133,17 +141,21 @@ const ReviewManagement = () => {
                 authConfig
             );
 
-            alert("Review added successfully");
+            alert(
+                "Manager review added successfully"
+            );
 
             resetForm();
+
             fetchReviews();
 
         } catch (error) {
+
             console.log(error);
 
             alert(
                 error.response?.data?.message ||
-                "Failed to add review"
+                "Failed to add manager review"
             );
         }
     };
@@ -153,23 +165,30 @@ const ReviewManagement = () => {
     // =========================
 
     const handleDelete = async (id) => {
+
         const confirmed = window.confirm(
             "Are you sure you want to delete this review?"
         );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+            return;
+        }
 
         try {
+
             await axios.delete(
                 `http://localhost:8080/api/reviews/${id}`,
                 authConfig
             );
 
-            alert("Review deleted successfully");
+            alert(
+                "Review deleted successfully"
+            );
 
             fetchReviews();
 
         } catch (error) {
+
             console.log(error);
 
             alert(
@@ -183,46 +202,65 @@ const ReviewManagement = () => {
     // FILTER REVIEWS
     // =========================
 
-    const filteredReviews = reviews.filter((review) => {
-        const searchValue = search.toLowerCase();
+    const managerReviews = reviews.filter(
+        (review) => review.employeeId == null
+    );
 
-        const matchesSearch =
-            review.employeeName
-                ?.toLowerCase()
-                .includes(searchValue) ||
-            review.managerName
-                ?.toLowerCase()
-                .includes(searchValue) ||
-            review.comments
-                ?.toLowerCase()
-                .includes(searchValue);
+    const filteredReviews = managerReviews.filter(
+        (review) => {
 
-        const matchesRating =
-            ratingFilter === "ALL" ||
-            review.rating === Number(ratingFilter);
+            const searchValue =
+                search.toLowerCase();
 
-        return matchesSearch && matchesRating;
-    });
+            const matchesSearch =
+                review.managerName
+                    ?.toLowerCase()
+                    .includes(searchValue) ||
+
+                review.comments
+                    ?.toLowerCase()
+                    .includes(searchValue);
+
+            const matchesRating =
+                ratingFilter === "ALL" ||
+                review.rating ===
+                Number(ratingFilter);
+
+            return (
+                matchesSearch &&
+                matchesRating
+            );
+        }
+    );
 
     // =========================
     // RATING DISPLAY
     // =========================
 
     const renderStars = (rating) => {
+
         return (
             <span className="text-yellow-500 tracking-wide">
-        {"★".repeat(rating)}
+
+                {"★".repeat(rating)}
+
                 <span className="text-gray-300">
-          {"★".repeat(5 - rating)}
-        </span>
-      </span>
+
+                    {"★".repeat(5 - rating)}
+
+                </span>
+
+            </span>
         );
     };
 
     return (
+
         <div className="space-y-6">
 
-            {/* HEADER */}
+            {/* =========================
+                HEADER
+            ========================= */}
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
@@ -233,11 +271,11 @@ const ReviewManagement = () => {
                     </p>
 
                     <h1 className="text-3xl font-bold text-gray-900">
-                        Reviews
+                        Manager Reviews
                     </h1>
 
                     <p className="text-gray-500 mt-1">
-                        Manage employee performance reviews.
+                        Review and evaluate manager performance.
                     </p>
 
                 </div>
@@ -246,13 +284,15 @@ const ReviewManagement = () => {
                     onClick={() => setShowForm(true)}
                     className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition"
                 >
-                    + Add Review
+                    + Add Manager Review
                 </button>
 
             </div>
 
 
-            {/* FILTERS */}
+            {/* =========================
+                FILTERS
+            ========================= */}
 
             <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
 
@@ -260,7 +300,7 @@ const ReviewManagement = () => {
 
                     <input
                         type="text"
-                        placeholder="Search employee, manager or comments..."
+                        placeholder="Search manager or comments..."
                         value={search}
                         onChange={(e) =>
                             setSearch(e.target.value)
@@ -307,7 +347,9 @@ const ReviewManagement = () => {
             </div>
 
 
-            {/* ADD REVIEW FORM */}
+            {/* =========================
+                ADD MANAGER REVIEW FORM
+            ========================= */}
 
             {showForm && (
 
@@ -316,13 +358,15 @@ const ReviewManagement = () => {
                     <div className="flex justify-between items-center mb-5">
 
                         <div>
+
                             <h2 className="text-xl font-semibold">
-                                Add Employee Review
+                                Add Manager Review
                             </h2>
 
                             <p className="text-sm text-gray-500 mt-1">
-                                Record a performance review.
+                                Give a performance review to a manager.
                             </p>
+
                         </div>
 
                         <button
@@ -334,49 +378,15 @@ const ReviewManagement = () => {
 
                     </div>
 
+
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-5"
                     >
 
-                        {/* EMPLOYEE */}
-
-                        <div>
-
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Employee
-                            </label>
-
-                            <select
-                                name="employeeId"
-                                value={formData.employeeId}
-                                onChange={handleChange}
-                                required
-                                className="w-full border p-3 rounded-lg"
-                            >
-
-                                <option value="">
-                                    Select Employee
-                                </option>
-
-                                {employees.map((employee) => (
-
-                                    <option
-                                        key={employee.id}
-                                        value={employee.id}
-                                    >
-                                        {employee.firstName}{" "}
-                                        {employee.lastName}
-                                    </option>
-
-                                ))}
-
-                            </select>
-
-                        </div>
-
-
-                        {/* MANAGER */}
+                        {/* =========================
+                            MANAGER
+                        ========================= */}
 
                         <div>
 
@@ -413,7 +423,9 @@ const ReviewManagement = () => {
                         </div>
 
 
-                        {/* RATING */}
+                        {/* =========================
+                            RATING
+                        ========================= */}
 
                         <div>
 
@@ -458,7 +470,9 @@ const ReviewManagement = () => {
                         </div>
 
 
-                        {/* COMMENTS */}
+                        {/* =========================
+                            COMMENTS
+                        ========================= */}
 
                         <div>
 
@@ -479,7 +493,9 @@ const ReviewManagement = () => {
                         </div>
 
 
-                        {/* BUTTONS */}
+                        {/* =========================
+                            BUTTONS
+                        ========================= */}
 
                         <div className="flex gap-3">
 
@@ -507,19 +523,17 @@ const ReviewManagement = () => {
             )}
 
 
-            {/* REVIEWS TABLE */}
+            {/* =========================
+                REVIEWS TABLE
+            ========================= */}
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
 
-                <table className="w-full min-w-[900px]">
+                <table className="w-full min-w-[800px]">
 
                     <thead className="bg-gray-50">
 
                     <tr>
-
-                        <th className="text-left p-4">
-                            Employee
-                        </th>
 
                         <th className="text-left p-4">
                             Manager
@@ -547,79 +561,85 @@ const ReviewManagement = () => {
 
                     <tbody>
 
-                    {filteredReviews.map((review) => (
+                    {filteredReviews.map(
+                        (review) => (
 
-                        <tr
-                            key={review.id}
-                            className="border-t hover:bg-gray-50"
-                        >
+                            <tr
+                                key={review.id}
+                                className="border-t hover:bg-gray-50"
+                            >
 
-                            <td className="p-4 font-medium">
-                                {review.employeeName}
-                            </td>
+                                <td className="p-4 font-medium">
+                                    {review.managerName}
+                                </td>
 
-                            <td className="p-4">
-                                {review.managerName}
-                            </td>
+                                <td className="p-4">
 
-                            <td className="p-4">
+                                    <div className="flex flex-col gap-1">
 
-                                <div className="flex flex-col gap-1">
+                                        {renderStars(
+                                            review.rating
+                                        )}
 
-                                    {renderStars(review.rating)}
+                                        <span className="text-xs text-gray-500">
+                                            {review.rating}/5
+                                        </span>
 
-                                    <span className="text-xs text-gray-500">
-                      {review.rating}/5
-                    </span>
+                                    </div>
 
-                                </div>
+                                </td>
 
-                            </td>
+                                <td className="p-4 max-w-[350px]">
 
-                            <td className="p-4 max-w-[350px]">
+                                    <p className="text-gray-600">
+                                        {review.comments}
+                                    </p>
 
-                                <p className="text-gray-600">
-                                    {review.comments}
-                                </p>
+                                </td>
 
-                            </td>
+                                <td className="p-4 text-gray-600">
+                                    {review.reviewDate}
+                                </td>
 
-                            <td className="p-4 text-gray-600">
-                                {review.reviewDate}
-                            </td>
+                                <td className="p-4">
 
-                            <td className="p-4">
+                                    <button
+                                        onClick={() =>
+                                            handleDelete(
+                                                review.id
+                                            )
+                                        }
+                                        className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700"
+                                    >
+                                        Delete
+                                    </button>
 
-                                <button
-                                    onClick={() =>
-                                        handleDelete(review.id)
-                                    }
-                                    className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700"
-                                >
-                                    Delete
-                                </button>
+                                </td>
 
-                            </td>
+                            </tr>
 
-                        </tr>
-
-                    ))}
+                        )
+                    )}
 
                     </tbody>
 
                 </table>
 
 
+                {/* =========================
+                    NO REVIEWS
+                ========================= */}
+
                 {filteredReviews.length === 0 && (
 
                     <div className="text-center py-12">
 
                         <p className="text-gray-500">
-                            No reviews found.
+                            No manager reviews found.
                         </p>
 
                         <p className="text-sm text-gray-400 mt-1">
-                            Try changing your search or filters.
+                            Add a review for a manager to see it here.
                         </p>
 
                     </div>

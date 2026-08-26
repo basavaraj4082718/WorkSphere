@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import ManagerManagement from "./pages/admin/ManagerManagement";
 import TaskManagement from "./pages/admin/TaskManagement";
+import ReviewManagement from "./pages/admin/ReviewManagement";
 
 // =========================================
 // MANAGER
@@ -96,8 +97,6 @@ function App() {
 
                 <Route element={<AdminLayout />}>
 
-                    {/* Admin */}
-
                     <Route
                         path="/admin"
                         element={
@@ -108,36 +107,31 @@ function App() {
                         }
                     />
 
-
-                    {/* Dashboard */}
-
                     <Route
                         path="/admin/dashboard"
                         element={<AdminDashboard />}
                     />
-
-
-                    {/* Employees */}
 
                     <Route
                         path="/admin/employees"
                         element={<EmployeeManagement />}
                     />
 
-
-                    {/* Managers */}
-
                     <Route
                         path="/admin/managers"
                         element={<ManagerManagement />}
                     />
 
-
-                    {/* Tasks */}
-
                     <Route
                         path="/admin/tasks"
                         element={<TaskManagement />}
+                    />
+
+                    {/* ADMIN REVIEWS */}
+
+                    <Route
+                        path="/admin/reviews"
+                        element={<ReviewManagement />}
                     />
 
                 </Route>
@@ -149,8 +143,6 @@ function App() {
 
                 <Route element={<ManagerLayout />}>
 
-                    {/* Manager */}
-
                     <Route
                         path="/manager"
                         element={
@@ -161,48 +153,32 @@ function App() {
                         }
                     />
 
-
-                    {/* Dashboard */}
-
                     <Route
                         path="/manager/dashboard"
                         element={<ManagerDashboard />}
                     />
-
-
-                    {/* My Team */}
 
                     <Route
                         path="/manager/team"
                         element={<ManagerTeam />}
                     />
 
-
-                    {/* Tasks */}
-
                     <Route
                         path="/manager/tasks"
                         element={<ManagerTaskManagement />}
                     />
-
-
-                    {/* Attendance */}
 
                     <Route
                         path="/manager/attendance"
                         element={<ManagerAttendance />}
                     />
 
-
-                    {/* Leave Requests */}
-
                     <Route
                         path="/manager/leaves"
                         element={<ManagerLeaveRequests />}
                     />
 
-
-                    {/* Reviews */}
+                    {/* MANAGER REVIEWS */}
 
                     <Route
                         path="/manager/reviews"
@@ -218,8 +194,6 @@ function App() {
 
                 <Route element={<EmployeeLayout />}>
 
-                    {/* Employee */}
-
                     <Route
                         path="/employee"
                         element={
@@ -230,48 +204,30 @@ function App() {
                         }
                     />
 
-
-                    {/* Employee Dashboard */}
-
                     <Route
                         path="/employee/dashboard"
                         element={<EmployeeDashboard />}
                     />
-
-
-                    {/* Employee Tasks */}
 
                     <Route
                         path="/employee/tasks"
                         element={<EmployeeTasks />}
                     />
 
-
-                    {/* Employee Attendance */}
-
                     <Route
                         path="/employee/attendance"
                         element={<EmployeeAttendance />}
                     />
-
-
-                    {/* Employee Performance */}
 
                     <Route
                         path="/employee/performance"
                         element={<EmployeePerformance />}
                     />
 
-
-                    {/* Employee Reviews */}
-
                     <Route
                         path="/employee/reviews"
                         element={<EmployeeReviews />}
                     />
-
-
-                    {/* Employee Leave Requests */}
 
                     <Route
                         path="/employee/leaves"
