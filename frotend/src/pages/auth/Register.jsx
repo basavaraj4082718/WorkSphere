@@ -66,18 +66,29 @@ function Register() {
 
         <div className="bg-white shadow-lg rounded-xl p-8 w-[400px]">
 
-
           {/* =========================
-            TITLE
+            WORKSPHERE BRANDING
         ========================= */}
 
-          <h1 className="text-3xl font-bold text-center mb-2">
-            Create Account
-          </h1>
+          <div className="text-center mb-6">
 
-          <p className="text-center text-gray-500 mb-6">
-            Register as an employee
-          </p>
+            <h1 className="text-3xl font-bold text-slate-900">
+              WorkSphere
+            </h1>
+
+            <p className="text-sm text-gray-500 mt-1">
+              Intelligent Workforce Management
+            </p>
+
+            <h2 className="text-xl font-semibold mt-5">
+              Create Account
+            </h2>
+
+            <p className="text-gray-500 mt-1">
+              Register as an employee
+            </p>
+
+          </div>
 
 
           {/* =========================
@@ -88,7 +99,6 @@ function Register() {
               onSubmit={handleSubmit}
               className="space-y-4"
           >
-
 
             {/* NAME */}
 

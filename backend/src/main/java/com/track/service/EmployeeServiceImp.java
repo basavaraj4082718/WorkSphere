@@ -15,6 +15,7 @@ import com.track.entity.User;
 import com.track.enums.Role;
 import com.track.repository.EmployeeRepository;
 import com.track.repository.ManagerRepository;
+import com.track.repository.TaskRepository;
 import com.track.repository.UserRepository;
 
 @Service
@@ -23,17 +24,20 @@ public class EmployeeServiceImp implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
 
     public EmployeeServiceImp(
             EmployeeRepository employeeRepository,
             ManagerRepository managerRepository,
             UserRepository userRepository,
+            TaskRepository taskRepository,
             PasswordEncoder passwordEncoder) {
 
         this.employeeRepository = employeeRepository;
         this.managerRepository = managerRepository;
         this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -47,10 +51,6 @@ public class EmployeeServiceImp implements EmployeeService {
     public EmployeeResponseDto createEmployee(
             EmployeeRequestDto requestDto) {
 
-        // ==========================================
-        // CHECK EMPLOYEE CODE
-        // ==========================================
-
         if (employeeRepository.existsByEmployeeCode(
                 requestDto.getEmployeeCode())) {
 
@@ -58,22 +58,12 @@ public class EmployeeServiceImp implements EmployeeService {
                     "Employee code already exists");
         }
 
-
-        // ==========================================
-        // CHECK EMPLOYEE EMAIL
-        // ==========================================
-
         if (employeeRepository.existsByEmail(
                 requestDto.getEmail())) {
 
             throw new RuntimeException(
                     "Employee email already exists");
         }
-
-
-        // ==========================================
-        // CHECK LOGIN EMAIL
-        // ==========================================
 
         if (userRepository.findByEmail(
                 requestDto.getEmail()).isPresent()) {
@@ -83,9 +73,7 @@ public class EmployeeServiceImp implements EmployeeService {
         }
 
 
-        // ==========================================
-        // CREATE USER / LOGIN ACCOUNT
-        // ==========================================
+        // CREATE USER
 
         User user = new User();
 
@@ -108,9 +96,7 @@ public class EmployeeServiceImp implements EmployeeService {
                 userRepository.save(user);
 
 
-        // ==========================================
-        // CREATE EMPLOYEE PROFILE
-        // ==========================================
+        // CREATE EMPLOYEE
 
         Employee employee = new Employee();
 
@@ -132,26 +118,12 @@ public class EmployeeServiceImp implements EmployeeService {
         employee.setDesignation(
                 requestDto.getDesignation());
 
-
-        // ==========================================
-        // VERY IMPORTANT
-        // LINK EMPLOYEE WITH USER
-        // ==========================================
-
         employee.setUser(savedUser);
 
-
-        // ==========================================
-        // SAVE EMPLOYEE
-        // ==========================================
 
         Employee savedEmployee =
                 employeeRepository.save(employee);
 
-
-        // ==========================================
-        // RETURN RESPONSE
-        // ==========================================
 
         return mapToResponseDto(savedEmployee);
     }
@@ -207,10 +179,6 @@ public class EmployeeServiceImp implements EmployeeService {
                                                 + id));
 
 
-        // ==========================================
-        // UPDATE EMPLOYEE PROFILE
-        // ==========================================
-
         employee.setEmployeeCode(
                 requestDto.getEmployeeCode());
 
@@ -230,10 +198,6 @@ public class EmployeeServiceImp implements EmployeeService {
                 requestDto.getDesignation());
 
 
-        // ==========================================
-        // UPDATE LOGIN USER
-        // ==========================================
-
         User user = employee.getUser();
 
         if (user != null) {
@@ -246,8 +210,7 @@ public class EmployeeServiceImp implements EmployeeService {
             user.setEmail(
                     requestDto.getEmail());
 
-            // Update password only if a new password
-            // was provided
+
             if (requestDto.getPassword() != null
                     && !requestDto.getPassword().isBlank()) {
 
@@ -284,18 +247,26 @@ public class EmployeeServiceImp implements EmployeeService {
 
 
         // ==========================================
-        // DELETE LOGIN USER
+        // 1. DELETE EMPLOYEE'S TASKS
+        // ==========================================
+
+        taskRepository.deleteByEmployeeId(id);
+
+
+        // ==========================================
+        // 2. DELETE EMPLOYEE'S LOGIN USER
         // ==========================================
 
         User user = employee.getUser();
 
         if (user != null) {
+
             userRepository.delete(user);
         }
 
 
         // ==========================================
-        // DELETE EMPLOYEE
+        // 3. DELETE EMPLOYEE
         // ==========================================
 
         employeeRepository.delete(employee);
@@ -318,16 +289,13 @@ public class EmployeeServiceImp implements EmployeeService {
                                 new RuntimeException(
                                         "Employee not found"));
 
-
         Manager manager =
                 managerRepository.findById(managerId)
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "Manager not found"));
 
-
         employee.setManager(manager);
-
 
         Employee savedEmployee =
                 employeeRepository.save(employee);

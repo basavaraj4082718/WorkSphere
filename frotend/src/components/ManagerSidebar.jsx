@@ -14,7 +14,7 @@ const ManagerSidebar = () => {
         <aside className="w-64 bg-gray-950 text-white min-h-screen p-5 flex flex-col">
 
             {/* =========================
-                LOGO
+                WORKSPHERE LOGO
             ========================= */}
 
             <div className="mb-10">
@@ -22,17 +22,17 @@ const ManagerSidebar = () => {
                 <div className="flex items-center gap-3">
 
                     <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-lg">
-                        ET
+                        WS
                     </div>
 
                     <div>
 
                         <h1 className="text-lg font-bold">
-                            Employee
+                            WorkSphere
                         </h1>
 
                         <p className="text-blue-400 text-sm">
-                            Tracker
+                            Workforce Management
                         </p>
 
                     </div>
@@ -136,7 +136,7 @@ const ManagerSidebar = () => {
                         </p>
 
                         <p className="text-sm text-gray-400 mt-1">
-                            Employee Tracker
+                            WorkSphere
                         </p>
 
                     </div>

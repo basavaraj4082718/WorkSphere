@@ -6,10 +6,12 @@ import com.track.entity.Manager;
 import com.track.entity.User;
 import com.track.enums.Role;
 import com.track.repository.ManagerRepository;
+import com.track.repository.TaskRepository;
 import com.track.repository.UserRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,28 +21,31 @@ public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
 
 
     public ManagerServiceImpl(
             ManagerRepository managerRepository,
             UserRepository userRepository,
+            TaskRepository taskRepository,
             PasswordEncoder passwordEncoder) {
 
         this.managerRepository = managerRepository;
         this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
 
+    // =========================================================
+    // CREATE MANAGER
+    // =========================================================
+
     @Override
+    @Transactional
     public ManagerResponseDto createManager(
             ManagerRequestDto requestDto) {
-
-
-        // ==========================================
-        // CHECK MANAGER CODE
-        // ==========================================
 
         if (managerRepository.existsByManagerCode(
                 requestDto.getManagerCode())) {
@@ -50,10 +55,6 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
 
-        // ==========================================
-        // CHECK MANAGER EMAIL
-        // ==========================================
-
         if (managerRepository.existsByEmail(
                 requestDto.getEmail())) {
 
@@ -61,10 +62,6 @@ public class ManagerServiceImpl implements ManagerService {
                     "Manager email already exists");
         }
 
-
-        // ==========================================
-        // CHECK LOGIN EMAIL
-        // ==========================================
 
         if (userRepository.findByEmail(
                 requestDto.getEmail()).isPresent()) {
@@ -74,9 +71,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
 
-        // ==========================================
         // CREATE MANAGER
-        // ==========================================
 
         Manager manager = new Manager();
 
@@ -100,9 +95,7 @@ public class ManagerServiceImpl implements ManagerService {
                 managerRepository.save(manager);
 
 
-        // ==========================================
         // CREATE LOGIN USER
-        // ==========================================
 
         User user = new User();
 
@@ -124,13 +117,13 @@ public class ManagerServiceImpl implements ManagerService {
         userRepository.save(user);
 
 
-        // ==========================================
-        // RETURN MANAGER
-        // ==========================================
-
         return mapToResponseDto(savedManager);
     }
 
+
+    // =========================================================
+    // GET ALL MANAGERS
+    // =========================================================
 
     @Override
     public List<ManagerResponseDto> getAllManagers() {
@@ -141,6 +134,10 @@ public class ManagerServiceImpl implements ManagerService {
                 .collect(Collectors.toList());
     }
 
+
+    // =========================================================
+    // GET MANAGER BY ID
+    // =========================================================
 
     @Override
     public ManagerResponseDto getManagerById(Long id) {
@@ -155,7 +152,12 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
 
+    // =========================================================
+    // UPDATE MANAGER
+    // =========================================================
+
     @Override
+    @Transactional
     public ManagerResponseDto updateManager(
             Long id,
             ManagerRequestDto requestDto) {
@@ -191,7 +193,12 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
 
+    // =========================================================
+    // DELETE MANAGER
+    // =========================================================
+
     @Override
+    @Transactional
     public void deleteManager(Long id) {
 
         Manager manager =
@@ -200,9 +207,40 @@ public class ManagerServiceImpl implements ManagerService {
                                 new RuntimeException(
                                         "Manager not found"));
 
+
+        // ==========================================
+        // 1. DELETE MANAGER'S TASKS
+        // ==========================================
+
+        taskRepository.deleteByManagerId(id);
+
+
+        // ==========================================
+        // 2. DELETE MANAGER'S LOGIN USER
+        // ==========================================
+
+        User user =
+                userRepository.findByEmail(
+                                manager.getEmail())
+                        .orElse(null);
+
+        if (user != null) {
+
+            userRepository.delete(user);
+        }
+
+
+        // ==========================================
+        // 3. DELETE MANAGER
+        // ==========================================
+
         managerRepository.delete(manager);
     }
 
+
+    // =========================================================
+    // MAP RESPONSE DTO
+    // =========================================================
 
     private ManagerResponseDto mapToResponseDto(
             Manager manager) {

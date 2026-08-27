@@ -15,6 +15,10 @@ const ManagerNavbar = () => {
 
             <div>
 
+                <p className="text-sm text-gray-500">
+                    WorkSphere
+                </p>
+
                 <h2 className="text-xl font-semibold text-gray-900">
                     Manager Panel
                 </h2>

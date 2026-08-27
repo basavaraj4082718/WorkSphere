@@ -58,31 +58,23 @@ function Login() {
       // =========================
 
       if (response.data.role === "ADMIN") {
-
         navigate("/admin");
 
       } else if (response.data.role === "MANAGER") {
-
         navigate("/manager");
 
       } else if (response.data.role === "EMPLOYEE") {
-
         navigate("/employee");
 
       } else {
-
         alert("Unknown user role");
-
       }
 
     } catch (error) {
 
       console.log("LOGIN ERROR:", error);
-
       console.log("STATUS:", error.response?.status);
-
       console.log("DATA:", error.response?.data);
-
       console.log("MESSAGE:", error.message);
 
       alert(
@@ -94,10 +86,9 @@ function Login() {
                   : JSON.stringify(error.response?.data)
           }`
       );
+
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -107,12 +98,24 @@ function Login() {
         <div className="bg-white shadow-lg rounded-xl p-8 w-[400px]">
 
           {/* =========================
-            TITLE
+            WORKSPHERE BRANDING
         ========================= */}
 
-          <h1 className="text-3xl font-bold text-center mb-6">
-            Login
-          </h1>
+          <div className="text-center mb-6">
+
+            <h1 className="text-3xl font-bold text-slate-900">
+              WorkSphere
+            </h1>
+
+            <p className="text-sm text-gray-500 mt-1">
+              Intelligent Workforce Management
+            </p>
+
+            <h2 className="text-xl font-semibold mt-5">
+              Welcome Back
+            </h2>
+
+          </div>
 
 
           {/* =========================

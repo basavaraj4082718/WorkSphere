@@ -53,13 +53,13 @@ const EmployeeSidebar = () => {
         <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
 
             {/* =====================================================
-          LOGO
-      ===================================================== */}
+                WORKSPHERE LOGO
+            ===================================================== */}
 
             <div className="px-6 py-6 border-b border-slate-700">
 
                 <h1 className="text-2xl font-bold">
-                    Track<span className="text-blue-400">.</span>
+                    Work<span className="text-blue-400">Sphere</span>
                 </h1>
 
                 <p className="text-sm text-slate-400 mt-1">
@@ -70,8 +70,8 @@ const EmployeeSidebar = () => {
 
 
             {/* =====================================================
-          MENU
-      ===================================================== */}
+                MENU
+            ===================================================== */}
 
             <nav className="flex-1 px-4 py-6 space-y-2">
 
@@ -89,13 +89,13 @@ const EmployeeSidebar = () => {
                         }
                     >
 
-            <span className="text-xl">
-              {item.icon}
-            </span>
+                        <span className="text-xl">
+                            {item.icon}
+                        </span>
 
                         <span className="font-medium">
-              {item.name}
-            </span>
+                            {item.name}
+                        </span>
 
                     </NavLink>
 
@@ -105,8 +105,8 @@ const EmployeeSidebar = () => {
 
 
             {/* =====================================================
-          USER
-      ===================================================== */}
+                USER
+            ===================================================== */}
 
             <div className="px-4 pb-4">
 
@@ -136,21 +136,21 @@ const EmployeeSidebar = () => {
 
 
                 {/* =====================================================
-            LOGOUT
-        ===================================================== */}
+                    LOGOUT
+                ===================================================== */}
 
                 <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-red-600 hover:text-white transition"
                 >
 
-          <span className="text-xl">
-            🚪
-          </span>
+                    <span className="text-xl">
+                        🚪
+                    </span>
 
                     <span className="font-medium">
-            Logout
-          </span>
+                        Logout
+                    </span>
 
                 </button>
 
