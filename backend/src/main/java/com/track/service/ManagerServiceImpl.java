@@ -5,7 +5,9 @@ import com.track.dto.ManagerResponseDto;
 import com.track.entity.Manager;
 import com.track.entity.User;
 import com.track.enums.Role;
+import com.track.repository.EmployeeRepository;
 import com.track.repository.ManagerRepository;
+import com.track.repository.ReviewRepository;
 import com.track.repository.TaskRepository;
 import com.track.repository.UserRepository;
 
@@ -20,20 +22,26 @@ import java.util.stream.Collectors;
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
+    private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
 
     public ManagerServiceImpl(
             ManagerRepository managerRepository,
+            EmployeeRepository employeeRepository,
             UserRepository userRepository,
             TaskRepository taskRepository,
+            ReviewRepository reviewRepository,
             PasswordEncoder passwordEncoder) {
 
         this.managerRepository = managerRepository;
+        this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -209,14 +217,28 @@ public class ManagerServiceImpl implements ManagerService {
 
 
         // ==========================================
-        // 1. DELETE MANAGER'S TASKS
+        // 1. REMOVE MANAGER FROM ASSIGNED EMPLOYEES
+        // ==========================================
+
+        employeeRepository.removeManagerFromEmployees(id);
+
+
+        // ==========================================
+        // 2. DELETE MANAGER'S REVIEWS
+        // ==========================================
+
+        reviewRepository.deleteByManagerId(id);
+
+
+        // ==========================================
+        // 3. DELETE MANAGER'S TASKS
         // ==========================================
 
         taskRepository.deleteByManagerId(id);
 
 
         // ==========================================
-        // 2. DELETE MANAGER'S LOGIN USER
+        // 4. DELETE MANAGER LOGIN USER
         // ==========================================
 
         User user =
@@ -231,7 +253,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 
         // ==========================================
-        // 3. DELETE MANAGER
+        // 5. DELETE MANAGER
         // ==========================================
 
         managerRepository.delete(manager);
@@ -269,3 +291,4 @@ public class ManagerServiceImpl implements ManagerService {
         return responseDto;
     }
 }
+

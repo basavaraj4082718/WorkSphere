@@ -15,6 +15,7 @@ import com.track.entity.User;
 import com.track.enums.Role;
 import com.track.repository.EmployeeRepository;
 import com.track.repository.ManagerRepository;
+import com.track.repository.ReviewRepository;
 import com.track.repository.TaskRepository;
 import com.track.repository.UserRepository;
 
@@ -25,19 +26,23 @@ public class EmployeeServiceImp implements EmployeeService {
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     public EmployeeServiceImp(
             EmployeeRepository employeeRepository,
             ManagerRepository managerRepository,
             UserRepository userRepository,
             TaskRepository taskRepository,
+            ReviewRepository reviewRepository,
             PasswordEncoder passwordEncoder) {
 
         this.employeeRepository = employeeRepository;
         this.managerRepository = managerRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -198,6 +203,8 @@ public class EmployeeServiceImp implements EmployeeService {
                 requestDto.getDesignation());
 
 
+        // UPDATE USER DETAILS
+
         User user = employee.getUser();
 
         if (user != null) {
@@ -246,23 +253,22 @@ public class EmployeeServiceImp implements EmployeeService {
                                                 + id));
 
 
+        // Store user before deleting employee
+        User user = employee.getUser();
+
+
         // ==========================================
-        // 1. DELETE EMPLOYEE'S TASKS
+        // 1. DELETE EMPLOYEE REVIEWS
+        // ==========================================
+
+        reviewRepository.deleteByEmployeeId(id);
+
+
+        // ==========================================
+        // 2. DELETE EMPLOYEE TASKS
         // ==========================================
 
         taskRepository.deleteByEmployeeId(id);
-
-
-        // ==========================================
-        // 2. DELETE EMPLOYEE'S LOGIN USER
-        // ==========================================
-
-        User user = employee.getUser();
-
-        if (user != null) {
-
-            userRepository.delete(user);
-        }
 
 
         // ==========================================
@@ -270,6 +276,16 @@ public class EmployeeServiceImp implements EmployeeService {
         // ==========================================
 
         employeeRepository.delete(employee);
+
+
+        // ==========================================
+        // 4. DELETE EMPLOYEE LOGIN USER
+        // ==========================================
+
+        if (user != null) {
+
+            userRepository.delete(user);
+        }
     }
 
 
@@ -340,3 +356,4 @@ public class EmployeeServiceImp implements EmployeeService {
         );
     }
 }
+
