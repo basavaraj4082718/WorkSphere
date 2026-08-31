@@ -4,7 +4,6 @@ import axios from "axios";
 function EmployeePerformance() {
 
     const [performance, setPerformance] = useState(null);
-    const [reviews, setReviews] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -61,38 +60,13 @@ function EmployeePerformance() {
             );
 
 
-            // =========================================
-            // REVIEWS
-            // =========================================
-
-            const reviewsResponse = await axios.get(
-                `http://localhost:8080/api/reviews/employee/${employeeId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-
             setPerformance(performanceResponse.data);
-            setReviews(reviewsResponse.data);
 
         } catch (error) {
 
             console.error(
                 "EMPLOYEE PERFORMANCE ERROR:",
                 error
-            );
-
-            console.error(
-                "STATUS:",
-                error.response?.status
-            );
-
-            console.error(
-                "DATA:",
-                error.response?.data
             );
 
             setError(
@@ -154,14 +128,10 @@ function EmployeePerformance() {
 
         return (
 
-            <div className="p-6">
+            <div className="flex justify-center items-center h-64">
 
-                <div className="bg-white rounded-xl shadow-sm border p-10 text-center">
-
-                    <div className="text-gray-500">
-                        Loading performance...
-                    </div>
-
+                <div className="text-gray-500 text-lg">
+                    Loading performance...
                 </div>
 
             </div>
@@ -178,26 +148,22 @@ function EmployeePerformance() {
 
         return (
 
-            <div className="p-6">
+            <div className="bg-red-50 border border-red-200 text-red-600 rounded-2xl p-6">
 
-                <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-5">
+                <h2 className="font-semibold text-lg mb-1">
+                    Unable to load performance
+                </h2>
 
-                    <h2 className="font-semibold text-lg mb-1">
-                        Unable to load performance
-                    </h2>
+                <p>
+                    {error}
+                </p>
 
-                    <p>
-                        {error}
-                    </p>
-
-                    <button
-                        onClick={fetchPerformance}
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                        Try Again
-                    </button>
-
-                </div>
+                <button
+                    onClick={fetchPerformance}
+                    className="mt-4 px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                >
+                    Try Again
+                </button>
 
             </div>
 
@@ -205,17 +171,23 @@ function EmployeePerformance() {
     }
 
 
+    // =========================================
+    // NO DATA
+    // =========================================
+
     if (!performance) {
 
         return (
 
-            <div className="p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
 
-                <div className="bg-white rounded-xl shadow-sm border p-10 text-center text-gray-500">
-
-                    No performance data available.
-
+                <div className="text-5xl mb-4">
+                    📊
                 </div>
+
+                <p className="text-gray-500">
+                    No performance data available.
+                </p>
 
             </div>
 
@@ -225,23 +197,27 @@ function EmployeePerformance() {
 
     return (
 
-        <div className="p-6">
+        <div className="space-y-8">
 
 
             {/* =========================================
                 HEADER
             ========================================= */}
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                 <div>
 
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <p className="text-blue-600 font-medium">
+                        Employee
+                    </p>
+
+                    <h1 className="text-4xl font-bold text-gray-900 mt-1">
                         My Performance
                     </h1>
 
-                    <p className="text-gray-500 mt-1">
-                        Track your productivity, attendance and reviews.
+                    <p className="text-gray-500 mt-2 text-lg">
+                        Track your productivity and attendance performance.
                     </p>
 
                 </div>
@@ -249,9 +225,9 @@ function EmployeePerformance() {
 
                 <button
                     onClick={fetchPerformance}
-                    className="mt-4 md:mt-0 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+                    className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 transition"
                 >
-                    Refresh
+                    ↻ Refresh
                 </button>
 
             </div>
@@ -261,7 +237,7 @@ function EmployeePerformance() {
                 EMPLOYEE NAME
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
                 <p className="text-sm text-gray-500">
                     Employee
@@ -278,9 +254,9 @@ function EmployeePerformance() {
                 FINAL SCORE
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
                     <div>
 
@@ -294,15 +270,17 @@ function EmployeePerformance() {
                             )}`}
                         >
                             {performance.finalScore.toFixed(1)}
-                            <span className="text-2xl text-gray-400">
+
+                            <span className="text-2xl text-gray-400 ml-1">
                                 /100
                             </span>
+
                         </h2>
 
                     </div>
 
 
-                    <div className="mt-5 md:mt-0 text-right">
+                    <div className="text-left md:text-right">
 
                         <p className="text-sm text-gray-500">
                             Performance Level
@@ -311,10 +289,10 @@ function EmployeePerformance() {
                         <p className="text-lg font-semibold text-gray-800 mt-1">
 
                             {performance.finalScore >= 80
-                                ? "Excellent"
+                                ? "Excellent 🚀"
                                 : performance.finalScore >= 60
-                                    ? "Good"
-                                    : "Needs Improvement"}
+                                    ? "Good 👍"
+                                    : "Needs Improvement 📈"}
 
                         </p>
 
@@ -327,10 +305,22 @@ function EmployeePerformance() {
 
                 <div className="mt-6">
 
+                    <div className="flex justify-between text-sm mb-2">
+
+                        <span className="text-gray-500">
+                            Overall Progress
+                        </span>
+
+                        <span className="font-semibold">
+                            {performance.finalScore.toFixed(1)}%
+                        </span>
+
+                    </div>
+
                     <div className="w-full bg-gray-200 rounded-full h-3">
 
                         <div
-                            className="bg-blue-600 h-3 rounded-full transition-all"
+                            className="bg-blue-600 h-3 rounded-full transition-all duration-500"
                             style={{
                                 width: `${getBarWidth(
                                     performance.finalScore
@@ -349,111 +339,164 @@ function EmployeePerformance() {
                 SCORE BREAKDOWN
             ========================================= */}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
 
+                <div className="mb-5">
 
-                {/* TASK SCORE */}
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Performance Breakdown
+                    </h2>
 
-                <div className="bg-white rounded-xl shadow-sm border p-6">
-
-                    <p className="text-sm text-gray-500">
-                        Task Performance
+                    <p className="text-gray-500 mt-1">
+                        Detailed overview of your performance metrics.
                     </p>
-
-                    <h3
-                        className={`text-3xl font-bold mt-2 ${getScoreColor(
-                            performance.taskScore
-                        )}`}
-                    >
-                        {performance.taskScore.toFixed(1)}%
-                    </h3>
-
-                    <p className="text-xs text-gray-400 mt-2">
-                        Weight: 40%
-                    </p>
-
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
-
-                        <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{
-                                width: `${getBarWidth(
-                                    performance.taskScore
-                                )}%`,
-                            }}
-                        />
-
-                    </div>
 
                 </div>
 
 
-                {/* ATTENDANCE SCORE */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <div className="bg-white rounded-xl shadow-sm border p-6">
 
-                    <p className="text-sm text-gray-500">
-                        Attendance
-                    </p>
+                    {/* TASK SCORE */}
 
-                    <h3
-                        className={`text-3xl font-bold mt-2 ${getScoreColor(
-                            performance.attendanceScore
-                        )}`}
-                    >
-                        {performance.attendanceScore.toFixed(1)}%
-                    </h3>
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-                    <p className="text-xs text-gray-400 mt-2">
-                        Weight: 30%
-                    </p>
+                        <div className="flex justify-between items-start">
 
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+                            <div>
 
-                        <div
-                            className="bg-green-500 h-2 rounded-full"
-                            style={{
-                                width: `${getBarWidth(
-                                    performance.attendanceScore
-                                )}%`,
-                            }}
-                        />
+                                <p className="text-sm text-gray-500">
+                                    Task Performance
+                                </p>
+
+                                <h3
+                                    className={`text-3xl font-bold mt-2 ${getScoreColor(
+                                        performance.taskScore
+                                    )}`}
+                                >
+                                    {performance.taskScore.toFixed(1)}%
+                                </h3>
+
+                            </div>
+
+                            <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center text-xl">
+                                📋
+                            </div>
+
+                        </div>
+
+                        <p className="text-xs text-gray-400 mt-3">
+                            Contribution: 40%
+                        </p>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+
+                            <div
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                                style={{
+                                    width: `${getBarWidth(
+                                        performance.taskScore
+                                    )}%`,
+                                }}
+                            />
+
+                        </div>
 
                     </div>
 
-                </div>
+
+                    {/* ATTENDANCE SCORE */}
+
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+
+                        <div className="flex justify-between items-start">
+
+                            <div>
+
+                                <p className="text-sm text-gray-500">
+                                    Attendance
+                                </p>
+
+                                <h3
+                                    className={`text-3xl font-bold mt-2 ${getScoreColor(
+                                        performance.attendanceScore
+                                    )}`}
+                                >
+                                    {performance.attendanceScore.toFixed(1)}%
+                                </h3>
+
+                            </div>
+
+                            <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center text-xl">
+                                🕐
+                            </div>
+
+                        </div>
+
+                        <p className="text-xs text-gray-400 mt-3">
+                            Contribution: 30%
+                        </p>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+
+                            <div
+                                className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                                style={{
+                                    width: `${getBarWidth(
+                                        performance.attendanceScore
+                                    )}%`,
+                                }}
+                            />
+
+                        </div>
+
+                    </div>
 
 
-                {/* REVIEW SCORE */}
+                    {/* REVIEW SCORE */}
 
-                <div className="bg-white rounded-xl shadow-sm border p-6">
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-                    <p className="text-sm text-gray-500">
-                        Manager Reviews
-                    </p>
+                        <div className="flex justify-between items-start">
 
-                    <h3
-                        className={`text-3xl font-bold mt-2 ${getScoreColor(
-                            performance.reviewScore
-                        )}`}
-                    >
-                        {performance.reviewScore.toFixed(1)}%
-                    </h3>
+                            <div>
 
-                    <p className="text-xs text-gray-400 mt-2">
-                        Weight: 30%
-                    </p>
+                                <p className="text-sm text-gray-500">
+                                    Review Score
+                                </p>
 
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+                                <h3
+                                    className={`text-3xl font-bold mt-2 ${getScoreColor(
+                                        performance.reviewScore
+                                    )}`}
+                                >
+                                    {performance.reviewScore.toFixed(1)}%
+                                </h3>
 
-                        <div
-                            className="bg-purple-500 h-2 rounded-full"
-                            style={{
-                                width: `${getBarWidth(
-                                    performance.reviewScore
-                                )}%`,
-                            }}
-                        />
+                            </div>
+
+                            <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center text-xl">
+                                ⭐
+                            </div>
+
+                        </div>
+
+                        <p className="text-xs text-gray-400 mt-3">
+                            Contribution: 30%
+                        </p>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+
+                            <div
+                                className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+                                style={{
+                                    width: `${getBarWidth(
+                                        performance.reviewScore
+                                    )}%`,
+                                }}
+                            />
+
+                        </div>
 
                     </div>
 
@@ -463,159 +506,93 @@ function EmployeePerformance() {
 
 
             {/* =========================================
-                HOW SCORE IS CALCULATED
+                PERFORMANCE CALCULATION
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-                <h2 className="text-xl font-semibold text-gray-800 mb-5">
-                    Performance Calculation
-                </h2>
+                <div className="mb-6">
+
+                    <p className="text-blue-600 font-medium">
+                        Understanding Your Score
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-gray-900 mt-1">
+                        Performance Calculation
+                    </h2>
+
+                    <p className="text-gray-500 mt-2">
+                        Your final performance score is calculated using the following metrics.
+                    </p>
+
+                </div>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-                    <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
 
-                        <p className="text-sm text-blue-600 font-medium">
+                        <div className="text-2xl mb-3">
+                            📋
+                        </div>
+
+                        <p className="text-sm text-blue-600 font-semibold">
                             Task Performance
                         </p>
 
                         <p className="text-sm text-gray-600 mt-2">
-                            Completed tasks compared to total assigned tasks.
+                            Based on completed tasks compared to your total assigned tasks.
                         </p>
 
-                        <p className="font-semibold text-gray-800 mt-3">
-                            40% of final score
+                        <p className="font-bold text-gray-800 mt-4">
+                            40% weight
                         </p>
 
                     </div>
 
 
-                    <div className="bg-green-50 rounded-lg p-4">
+                    <div className="bg-green-50 rounded-xl p-5 border border-green-100">
 
-                        <p className="text-sm text-green-600 font-medium">
+                        <div className="text-2xl mb-3">
+                            🕐
+                        </div>
+
+                        <p className="text-sm text-green-600 font-semibold">
                             Attendance
                         </p>
 
                         <p className="text-sm text-gray-600 mt-2">
-                            Percentage of attendance marked as present.
+                            Based on your attendance consistency and presence.
                         </p>
 
-                        <p className="font-semibold text-gray-800 mt-3">
-                            30% of final score
+                        <p className="font-bold text-gray-800 mt-4">
+                            30% weight
                         </p>
 
                     </div>
 
 
-                    <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="bg-purple-50 rounded-xl p-5 border border-purple-100">
 
-                        <p className="text-sm text-purple-600 font-medium">
+                        <div className="text-2xl mb-3">
+                            ⭐
+                        </div>
+
+                        <p className="text-sm text-purple-600 font-semibold">
                             Manager Reviews
                         </p>
 
                         <p className="text-sm text-gray-600 mt-2">
-                            Average manager rating converted to a percentage.
+                            Based on ratings and feedback provided by your manager.
                         </p>
 
-                        <p className="font-semibold text-gray-800 mt-3">
-                            30% of final score
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {/* =========================================
-                REVIEWS
-            ========================================= */}
-
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-
-                <div className="flex justify-between items-center mb-6">
-
-                    <div>
-
-                        <h2 className="text-xl font-semibold text-gray-800">
-                            Manager Reviews
-                        </h2>
-
-                        <p className="text-sm text-gray-500 mt-1">
-                            Feedback and ratings received from your manager.
+                        <p className="font-bold text-gray-800 mt-4">
+                            30% weight
                         </p>
 
                     </div>
 
                 </div>
-
-
-                {reviews.length === 0 ? (
-
-                    <div className="text-center py-10 text-gray-500">
-
-                        No manager reviews available yet.
-
-                    </div>
-
-                ) : (
-
-                    <div className="space-y-4">
-
-                        {reviews.map((review) => (
-
-                            <div
-                                key={review.id}
-                                className="border rounded-xl p-5 hover:bg-gray-50"
-                            >
-
-                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-
-                                    <div>
-
-                                        <p className="font-semibold text-gray-800">
-                                            {review.managerName}
-                                        </p>
-
-                                        <p className="text-sm text-gray-500">
-                                            {review.reviewDate}
-                                        </p>
-
-                                    </div>
-
-
-                                    <div className="flex items-center gap-2">
-
-                                        <span className="text-yellow-500 text-lg">
-                                            ★
-                                        </span>
-
-                                        <span className="font-bold text-gray-800">
-                                            {review.rating}/5
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="mt-4 bg-gray-50 rounded-lg p-4">
-
-                                    <p className="text-sm text-gray-700">
-                                        {review.comments}
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        ))}
-
-                    </div>
-
-                )}
 
             </div>
 

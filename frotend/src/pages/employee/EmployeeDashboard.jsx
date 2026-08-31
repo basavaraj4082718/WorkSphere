@@ -6,6 +6,11 @@ const EmployeeDashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
+  // =========================================
+  // FETCH DASHBOARD
+  // =========================================
+
   useEffect(() => {
 
     let cancelled = false;
@@ -17,8 +22,11 @@ const EmployeeDashboard = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          throw new Error("No authentication token found");
+          throw new Error(
+              "No authentication token found"
+          );
         }
+
 
         const response = await axios.get(
             "http://localhost:8080/api/dashboard/employee/me",
@@ -29,10 +37,12 @@ const EmployeeDashboard = () => {
             }
         );
 
+
         console.log(
             "Employee dashboard:",
             response.data
         );
+
 
         if (!cancelled) {
           setDashboard(response.data);
@@ -43,16 +53,6 @@ const EmployeeDashboard = () => {
         console.error(
             "EMPLOYEE DASHBOARD ERROR:",
             error
-        );
-
-        console.error(
-            "STATUS:",
-            error.response?.status
-        );
-
-        console.error(
-            "DATA:",
-            error.response?.data
         );
 
         if (!cancelled) {
@@ -75,7 +75,9 @@ const EmployeeDashboard = () => {
       }
     };
 
+
     void fetchDashboard();
+
 
     return () => {
       cancelled = true;
@@ -91,14 +93,23 @@ const EmployeeDashboard = () => {
   if (loading) {
 
     return (
-        <div className="flex justify-center items-center h-64">
 
-          <div className="text-gray-500 text-lg">
-            Loading your dashboard...
+        <div className="flex justify-center items-center min-h-[60vh]">
+
+          <div className="text-center">
+
+            <div className="w-12 h-12 mx-auto border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
+
+            <p className="text-slate-500 mt-4 font-medium">
+              Loading your dashboard...
+            </p>
+
           </div>
 
         </div>
+
     );
+
   }
 
 
@@ -109,26 +120,29 @@ const EmployeeDashboard = () => {
   if (!dashboard) {
 
     return (
-        <div className="flex justify-center items-center h-64">
 
-          <div className="text-center">
+        <div className="flex justify-center items-center min-h-[60vh]">
+
+          <div className="text-center bg-white border border-slate-200 rounded-2xl p-10 shadow-sm">
 
             <div className="text-5xl mb-4">
               ⚠️
             </div>
 
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-bold text-slate-900">
               Dashboard unavailable
             </h2>
 
-            <p className="text-gray-500 mt-2">
+            <p className="text-slate-500 mt-2">
               We couldn't load your dashboard data.
             </p>
 
           </div>
 
         </div>
+
     );
+
   }
 
 
@@ -156,199 +170,330 @@ const EmployeeDashboard = () => {
       Number(dashboard.performanceScore || 0);
 
 
+  const remainingTasks =
+      Math.max(
+          dashboard.assignedTasks -
+          dashboard.completedTasks,
+          0
+      );
+
+
+  // =========================================
+  // PERFORMANCE STATUS
+  // =========================================
+
+  const getPerformanceMessage = () => {
+
+    if (performanceScore >= 80) {
+      return "Excellent work! You're performing exceptionally well.";
+    }
+
+    if (performanceScore >= 60) {
+      return "Great progress! Keep up the momentum.";
+    }
+
+    if (performanceScore >= 40) {
+      return "You're making progress. Keep pushing forward!";
+    }
+
+    return "Every step counts. Focus on consistent improvement.";
+  };
+
+
   return (
 
-      <div className="space-y-8">
+      <div className="space-y-7">
 
-        {/* HEADER */}
 
-        <div>
+        {/* =====================================
+                HEADER
+            ===================================== */}
 
-          <p className="text-blue-600 font-medium">
-            Employee Dashboard
-          </p>
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
 
-          <h1 className="text-4xl font-bold text-gray-900 mt-1">
-            Welcome, {dashboard.employeeName} 👋
-          </h1>
+          <div>
 
-          <p className="text-gray-500 mt-2 text-lg">
-            Here's an overview of your work and performance.
-          </p>
+            <div className="flex items-center gap-2">
+
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+
+              <p className="text-indigo-600 font-semibold text-sm">
+                EMPLOYEE WORKSPACE
+              </p>
+
+            </div>
+
+
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mt-2">
+
+              Welcome back, {dashboard.employeeName} 👋
+
+            </h1>
+
+
+            <p className="text-slate-500 mt-3">
+
+              Here's a quick overview of your work,
+              progress and performance.
+
+            </p>
+
+          </div>
+
+
+          {/* DATE */}
+
+          <div className="bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
+
+            <p className="text-xs uppercase tracking-wider font-semibold text-slate-400">
+              Today
+            </p>
+
+            <p className="text-sm font-semibold text-slate-700 mt-1">
+
+              {new Date().toLocaleDateString(
+                  "en-US",
+                  {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  }
+              )}
+
+            </p>
+
+          </div>
 
         </div>
 
 
-        {/* STAT CARDS */}
+        {/* =====================================
+                STAT CARDS
+            ===================================== */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-          {/* Assigned Tasks */}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          {/* ASSIGNED TASKS */}
+
+          <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
 
             <div className="flex justify-between items-start">
 
               <div>
 
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm font-medium text-slate-500">
                   Assigned Tasks
                 </p>
 
-                <p className="text-4xl font-bold mt-3">
+                <p className="text-4xl font-bold text-slate-900 mt-3">
                   {dashboard.assignedTasks}
                 </p>
 
               </div>
 
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
+
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 📋
               </div>
 
             </div>
 
-            <p className="text-gray-400 text-sm mt-4">
-              Tasks assigned to you
-            </p>
+
+            <div className="mt-5 pt-4 border-t border-slate-100">
+
+              <p className="text-sm text-slate-400">
+                Total tasks assigned to you
+              </p>
+
+            </div>
 
           </div>
 
 
-          {/* Completed Tasks */}
+          {/* COMPLETED TASKS */}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
 
             <div className="flex justify-between items-start">
 
               <div>
 
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm font-medium text-slate-500">
                   Completed Tasks
                 </p>
 
-                <p className="text-4xl font-bold mt-3 text-green-600">
+                <p className="text-4xl font-bold text-emerald-600 mt-3">
                   {dashboard.completedTasks}
                 </p>
 
               </div>
 
-              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-2xl">
-                ✅
+
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                ✓
               </div>
 
             </div>
 
-            <p className="text-gray-400 text-sm mt-4">
-              Successfully completed
-            </p>
+
+            <div className="mt-5 pt-4 border-t border-slate-100">
+
+              <p className="text-sm text-slate-400">
+                Successfully completed tasks
+              </p>
+
+            </div>
 
           </div>
 
 
-          {/* Attendance */}
+          {/* ATTENDANCE */}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
 
             <div className="flex justify-between items-start">
 
               <div>
 
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm font-medium text-slate-500">
                   Attendance
                 </p>
 
-                <p className="text-4xl font-bold mt-3 text-blue-600">
+                <p className="text-4xl font-bold text-indigo-600 mt-3">
                   {attendanceScore.toFixed(1)}%
                 </p>
 
               </div>
 
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
+
+              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 🕐
               </div>
 
             </div>
 
-            <p className="text-gray-400 text-sm mt-4">
-              Attendance score
-            </p>
+
+            <div className="mt-5 pt-4 border-t border-slate-100">
+
+              <p className="text-sm text-slate-400">
+                Your attendance score
+              </p>
+
+            </div>
 
           </div>
 
 
-          {/* Performance */}
+          {/* PERFORMANCE */}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
 
             <div className="flex justify-between items-start">
 
               <div>
 
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm font-medium text-slate-500">
                   Performance
                 </p>
 
-                <p className="text-4xl font-bold mt-3 text-purple-600">
+                <p className="text-4xl font-bold text-violet-600 mt-3">
                   {performanceScore.toFixed(1)}
                 </p>
 
               </div>
 
-              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-2xl">
+
+              <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 ⭐
               </div>
 
             </div>
 
-            <p className="text-gray-400 text-sm mt-4">
-              Overall performance score
-            </p>
+
+            <div className="mt-5 pt-4 border-t border-slate-100">
+
+              <p className="text-sm text-slate-400">
+                Overall performance score
+              </p>
+
+            </div>
 
           </div>
 
         </div>
 
 
-        {/* PERFORMANCE + TASK PROGRESS */}
+        {/* =====================================
+                PERFORMANCE + TASK PROGRESS
+            ===================================== */}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-          {/* Performance Overview */}
-
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-
-            <h2 className="text-2xl font-bold">
-              Performance Overview
-            </h2>
-
-            <p className="text-gray-500 mt-1">
-              Your current performance metrics
-            </p>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
 
-            {/* Attendance */}
+          {/* PERFORMANCE OVERVIEW */}
 
-            <div className="mt-7">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7">
 
-              <div className="flex justify-between mb-2">
+            <div className="flex items-start justify-between">
 
-                            <span className="text-gray-600">
-                                Attendance
-                            </span>
+              <div>
 
-                <span className="font-semibold">
+                <p className="text-xs uppercase tracking-wider font-semibold text-indigo-500">
+                  Insights
+                </p>
+
+                <h2 className="text-xl font-bold text-slate-900 mt-1">
+                  Performance Overview
+                </h2>
+
+                <p className="text-sm text-slate-500 mt-1">
+                  Your current performance metrics
+                </p>
+
+              </div>
+
+
+              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                📈
+              </div>
+
+            </div>
+
+
+            {/* ATTENDANCE */}
+
+            <div className="mt-8">
+
+              <div className="flex justify-between items-center mb-3">
+
+                <div>
+
+                  <p className="font-medium text-slate-700">
+                    Attendance
+                  </p>
+
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Consistency at work
+                  </p>
+
+                </div>
+
+
+                <span className="font-bold text-indigo-600">
                                 {attendanceScore.toFixed(1)}%
                             </span>
 
               </div>
 
-              <div className="w-full bg-gray-200 rounded-full h-3">
+
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
 
                 <div
-                    className="bg-blue-600 h-3 rounded-full"
+                    className="h-full bg-indigo-600 rounded-full transition-all duration-500"
                     style={{
                       width: `${Math.min(
-                          attendanceScore,
+                          Math.max(attendanceScore, 0),
                           100
                       )}%`,
                     }}
@@ -359,29 +504,42 @@ const EmployeeDashboard = () => {
             </div>
 
 
-            {/* Review */}
+            {/* REVIEW SCORE */}
 
-            <div className="mt-6">
+            <div className="mt-7">
 
-              <div className="flex justify-between mb-2">
+              <div className="flex justify-between items-center mb-3">
 
-                            <span className="text-gray-600">
-                                Review Score
-                            </span>
+                <div>
 
-                <span className="font-semibold">
+                  <p className="font-medium text-slate-700">
+                    Review Score
+                  </p>
+
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Based on manager feedback
+                  </p>
+
+                </div>
+
+
+                <span className="font-bold text-amber-500">
                                 {reviewScore.toFixed(1)} / 5
                             </span>
 
               </div>
 
-              <div className="w-full bg-gray-200 rounded-full h-3">
+
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
 
                 <div
-                    className="bg-yellow-500 h-3 rounded-full"
+                    className="h-full bg-amber-400 rounded-full transition-all duration-500"
                     style={{
                       width: `${Math.min(
-                          (reviewScore / 5) * 100,
+                          Math.max(
+                              (reviewScore / 5) * 100,
+                              0
+                          ),
                           100
                       )}%`,
                     }}
@@ -392,29 +550,39 @@ const EmployeeDashboard = () => {
             </div>
 
 
-            {/* Overall */}
+            {/* OVERALL PERFORMANCE */}
 
-            <div className="mt-6">
+            <div className="mt-7">
 
-              <div className="flex justify-between mb-2">
+              <div className="flex justify-between items-center mb-3">
 
-                            <span className="text-gray-600">
-                                Overall Performance
-                            </span>
+                <div>
 
-                <span className="font-semibold">
+                  <p className="font-medium text-slate-700">
+                    Overall Performance
+                  </p>
+
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Combined performance score
+                  </p>
+
+                </div>
+
+
+                <span className="font-bold text-violet-600">
                                 {performanceScore.toFixed(1)}
                             </span>
 
               </div>
 
-              <div className="w-full bg-gray-200 rounded-full h-3">
+
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
 
                 <div
-                    className="bg-purple-600 h-3 rounded-full"
+                    className="h-full bg-violet-600 rounded-full transition-all duration-500"
                     style={{
                       width: `${Math.min(
-                          performanceScore,
+                          Math.max(performanceScore, 0),
                           100
                       )}%`,
                     }}
@@ -427,44 +595,61 @@ const EmployeeDashboard = () => {
           </div>
 
 
-          {/* Task Progress */}
+          {/* =====================================
+                    TASK PROGRESS
+                ===================================== */}
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7">
 
-            <h2 className="text-2xl font-bold">
-              Task Progress
-            </h2>
+            <div className="flex items-start justify-between">
 
-            <p className="text-gray-500 mt-1">
-              Your current task completion
-            </p>
+              <div>
+
+                <p className="text-xs uppercase tracking-wider font-semibold text-indigo-500">
+                  Productivity
+                </p>
+
+                <h2 className="text-xl font-bold text-slate-900 mt-1">
+                  Task Progress
+                </h2>
+
+                <p className="text-sm text-slate-500 mt-1">
+                  Your current task completion status
+                </p>
+
+              </div>
 
 
-            <div className="flex justify-center items-center py-8">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+                🎯
+              </div>
 
-              <div className="relative w-44 h-44">
+            </div>
 
-                <div className="w-full h-full rounded-full border-[14px] border-gray-200" />
 
-                <div
-                    className="absolute inset-0 rounded-full border-[14px] border-blue-600"
-                    style={{
-                      clipPath: `polygon(
-                                        0 0,
-                                        ${taskCompletion}% 0,
-                                        ${taskCompletion}% 100%,
-                                        0 100%
-                                    )`,
-                    }}
-                />
+            {/* CIRCULAR PROGRESS */}
 
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="flex justify-center py-8">
 
-                  <p className="text-4xl font-bold">
+              <div
+                  className="relative w-44 h-44 rounded-full flex items-center justify-center"
+                  style={{
+                    background: `conic-gradient(
+                                    #4f46e5 ${taskCompletion * 3.6}deg,
+                                    #e2e8f0 0deg
+                                )`,
+                  }}
+              >
+
+                {/* INNER CIRCLE */}
+
+                <div className="w-36 h-36 rounded-full bg-white flex flex-col items-center justify-center shadow-inner">
+
+                  <p className="text-4xl font-bold text-slate-900">
                     {taskCompletion}%
                   </p>
 
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-sm text-slate-500 mt-1">
                     Completed
                   </p>
 
@@ -475,29 +660,35 @@ const EmployeeDashboard = () => {
             </div>
 
 
-            <div className="flex justify-center gap-8">
+            {/* TASK COUNTS */}
 
-              <div className="text-center">
+            <div className="grid grid-cols-2 gap-4">
 
-                <p className="text-2xl font-bold">
+
+              {/* COMPLETED */}
+
+              <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+
+                <p className="text-2xl font-bold text-emerald-600">
                   {dashboard.completedTasks}
                 </p>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-xs font-medium text-emerald-700 mt-1">
                   Completed
                 </p>
 
               </div>
 
 
-              <div className="text-center">
+              {/* REMAINING */}
 
-                <p className="text-2xl font-bold">
-                  {dashboard.assignedTasks -
-                      dashboard.completedTasks}
+              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 text-center">
+
+                <p className="text-2xl font-bold text-slate-700">
+                  {remainingTasks}
                 </p>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-xs font-medium text-slate-500 mt-1">
                   Remaining
                 </p>
 
@@ -510,37 +701,102 @@ const EmployeeDashboard = () => {
         </div>
 
 
-        {/* PERFORMANCE SCORE */}
+        {/* =====================================
+                PERFORMANCE HIGHLIGHT
+            ===================================== */}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="
+                relative
+                overflow-hidden
+                rounded-2xl
+                bg-gradient-to-r
+                from-indigo-600
+                via-indigo-600
+                to-violet-600
+                p-7
+                sm:p-8
+                shadow-lg
+                shadow-indigo-200
+            ">
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
 
-            <div>
+          {/* BACKGROUND DECORATION */}
 
-              <p className="text-blue-600 font-medium">
+          <div className="
+                    absolute
+                    -right-16
+                    -top-16
+                    w-56
+                    h-56
+                    rounded-full
+                    bg-white/10
+                " />
+
+          <div className="
+                    absolute
+                    right-32
+                    -bottom-24
+                    w-48
+                    h-48
+                    rounded-full
+                    bg-violet-400/20
+                " />
+
+
+          <div className="
+                    relative
+                    flex
+                    flex-col
+                    md:flex-row
+                    md:items-center
+                    justify-between
+                    gap-8
+                ">
+
+
+            {/* TEXT */}
+
+            <div className="max-w-2xl">
+
+              <p className="text-indigo-200 text-sm font-semibold uppercase tracking-wider">
                 Overall Performance
               </p>
 
-              <h2 className="text-3xl font-bold mt-1">
+
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2">
                 Keep pushing forward! 🚀
               </h2>
 
-              <p className="text-gray-500 mt-2">
-                Your performance score is based on
-                attendance, reviews and task progress.
+
+              <p className="text-indigo-100 mt-3 leading-relaxed">
+                {getPerformanceMessage()}
               </p>
 
             </div>
 
 
-            <div className="w-32 h-32 rounded-full border-[10px] border-purple-500 flex flex-col items-center justify-center">
+            {/* SCORE */}
 
-              <p className="text-3xl font-bold">
+            <div className="
+                        shrink-0
+                        w-32
+                        h-32
+                        rounded-full
+                        border-[8px]
+                        border-white/30
+                        bg-white/10
+                        backdrop-blur-sm
+                        flex
+                        flex-col
+                        items-center
+                        justify-center
+                    ">
+
+              <p className="text-3xl font-bold text-white">
                 {performanceScore.toFixed(1)}
               </p>
 
-              <p className="text-gray-500 text-sm">
+              <p className="text-sm text-indigo-100">
                 Score
               </p>
 
@@ -551,6 +807,7 @@ const EmployeeDashboard = () => {
         </div>
 
       </div>
+
   );
 };
 

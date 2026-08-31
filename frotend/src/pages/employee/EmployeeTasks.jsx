@@ -21,10 +21,6 @@ const EmployeeTasks = () => {
                 throw new Error("No authentication token found");
             }
 
-            /*
-             * We first get the logged-in employee dashboard.
-             * This gives us the employeeId.
-             */
 
             const dashboardResponse = await axios.get(
                 "http://localhost:8080/api/dashboard/employee/me",
@@ -38,15 +34,6 @@ const EmployeeTasks = () => {
             const employeeId =
                 dashboardResponse.data.employeeId;
 
-            /*
-             * Now get all tasks.
-             *
-             * Your current backend already has:
-             * GET /api/tasks
-             *
-             * We filter the result on the frontend
-             * using employeeId.
-             */
 
             const taskResponse = await axios.get(
                 "http://localhost:8080/api/tasks",
@@ -57,8 +44,9 @@ const EmployeeTasks = () => {
                 }
             );
 
+
             const myTasks = taskResponse.data.filter(
-                (task) => task.employeeId === employeeId
+                (task) => Number(task.employeeId) === Number(employeeId)
             );
 
             setTasks(myTasks);
@@ -66,16 +54,6 @@ const EmployeeTasks = () => {
         } catch (error) {
 
             console.error("MY TASKS ERROR:", error);
-
-            console.error(
-                "STATUS:",
-                error.response?.status
-            );
-
-            console.error(
-                "DATA:",
-                error.response?.data
-            );
 
             alert(
                 error.response?.data?.message ||
@@ -98,21 +76,7 @@ const EmployeeTasks = () => {
 
     useEffect(() => {
 
-        let cancelled = false;
-
-        const load = async () => {
-
-            if (!cancelled) {
-                await fetchMyTasks();
-            }
-
-        };
-
-        void load();
-
-        return () => {
-            cancelled = true;
-        };
+        fetchMyTasks();
 
     }, []);
 
@@ -141,9 +105,6 @@ const EmployeeTasks = () => {
                 }
             );
 
-            /*
-             * Refresh tasks after updating status
-             */
 
             await fetchMyTasks();
 
@@ -169,16 +130,81 @@ const EmployeeTasks = () => {
 
 
     // =========================================================
+    // CALCULATIONS
+    // =========================================================
+
+    const pendingTasks =
+        tasks.filter(
+            (task) => task.status === "PENDING"
+        ).length;
+
+
+    const inProgressTasks =
+        tasks.filter(
+            (task) => task.status === "IN_PROGRESS"
+        ).length;
+
+
+    const completedTasks =
+        tasks.filter(
+            (task) => task.status === "COMPLETED"
+        ).length;
+
+
+    // =========================================================
+    // PRIORITY STYLE
+    // =========================================================
+
+    const getPriorityClass = (priority) => {
+
+        if (priority === "HIGH") {
+            return "bg-red-50 text-red-700 border-red-100";
+        }
+
+        if (priority === "MEDIUM") {
+            return "bg-amber-50 text-amber-700 border-amber-100";
+        }
+
+        return "bg-emerald-50 text-emerald-700 border-emerald-100";
+    };
+
+
+    // =========================================================
+    // STATUS STYLE
+    // =========================================================
+
+    const getStatusClass = (status) => {
+
+        if (status === "COMPLETED") {
+            return "bg-emerald-50 text-emerald-700 border-emerald-100";
+        }
+
+        if (status === "IN_PROGRESS") {
+            return "bg-indigo-50 text-indigo-700 border-indigo-100";
+        }
+
+        return "bg-slate-100 text-slate-600 border-slate-200";
+    };
+
+
+    // =========================================================
     // LOADING
     // =========================================================
 
     if (loading) {
 
         return (
-            <div className="flex justify-center items-center h-64">
 
-                <div className="text-gray-500 text-lg">
-                    Loading your tasks...
+            <div className="flex min-h-[60vh] items-center justify-center">
+
+                <div className="text-center">
+
+                    <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mx-auto" />
+
+                    <p className="text-slate-500 font-medium mt-4">
+                        Loading your tasks...
+                    </p>
+
                 </div>
 
             </div>
@@ -194,50 +220,155 @@ const EmployeeTasks = () => {
 
         <div className="space-y-8">
 
+
             {/* =====================================================
-          HEADER
-      ===================================================== */}
+                HEADER
+            ===================================================== */}
 
-            <div>
+            <div className="flex flex-col gap-2">
 
-                <p className="text-blue-600 font-medium">
-                    Employee
+                <p className="text-indigo-600 font-semibold text-sm">
+                    Employee Workspace
                 </p>
 
-                <h1 className="text-4xl font-bold text-gray-900 mt-1">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
                     My Tasks
                 </h1>
 
-                <p className="text-gray-500 mt-2 text-lg">
-                    View and manage the tasks assigned to you.
+                <p className="text-slate-500 text-base sm:text-lg">
+                    Track your assignments and keep your work progress up to date.
                 </p>
 
             </div>
 
 
             {/* =====================================================
-          TASK COUNT
-      ===================================================== */}
+                TASK STATISTICS
+            ===================================================== */}
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-                <div className="flex items-center justify-between">
 
-                    <div>
+                {/* TOTAL */}
 
-                        <p className="text-gray-500 text-sm">
-                            Total Assigned Tasks
-                        </p>
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
 
-                        <p className="text-4xl font-bold mt-2">
-                            {tasks.length}
-                        </p>
+                    <div className="flex items-start justify-between">
+
+                        <div>
+
+                            <p className="text-sm font-medium text-slate-500">
+                                Total Tasks
+                            </p>
+
+                            <p className="text-4xl font-bold text-slate-900 mt-3">
+                                {tasks.length}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                            📋
+                        </div>
 
                     </div>
 
-                    <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
-                        📋
+                    <p className="text-sm text-slate-400 mt-5">
+                        Tasks assigned to you
+                    </p>
+
+                </div>
+
+
+                {/* PENDING */}
+
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+
+                    <div className="flex items-start justify-between">
+
+                        <div>
+
+                            <p className="text-sm font-medium text-slate-500">
+                                Pending
+                            </p>
+
+                            <p className="text-4xl font-bold text-slate-700 mt-3">
+                                {pendingTasks}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-xl">
+                            ⏳
+                        </div>
+
                     </div>
+
+                    <p className="text-sm text-slate-400 mt-5">
+                        Waiting to be started
+                    </p>
+
+                </div>
+
+
+                {/* IN PROGRESS */}
+
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+
+                    <div className="flex items-start justify-between">
+
+                        <div>
+
+                            <p className="text-sm font-medium text-slate-500">
+                                In Progress
+                            </p>
+
+                            <p className="text-4xl font-bold text-indigo-600 mt-3">
+                                {inProgressTasks}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-xl">
+                            🚀
+                        </div>
+
+                    </div>
+
+                    <p className="text-sm text-slate-400 mt-5">
+                        Currently being worked on
+                    </p>
+
+                </div>
+
+
+                {/* COMPLETED */}
+
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+
+                    <div className="flex items-start justify-between">
+
+                        <div>
+
+                            <p className="text-sm font-medium text-slate-500">
+                                Completed
+                            </p>
+
+                            <p className="text-4xl font-bold text-emerald-600 mt-3">
+                                {completedTasks}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">
+                            ✓
+                        </div>
+
+                    </div>
+
+                    <p className="text-sm text-slate-400 mt-5">
+                        Successfully completed
+                    </p>
 
                 </div>
 
@@ -245,23 +376,54 @@ const EmployeeTasks = () => {
 
 
             {/* =====================================================
-          NO TASKS
-      ===================================================== */}
+                TASK LIST HEADER
+            ===================================================== */}
+
+            <div className="flex items-center justify-between">
+
+                <div>
+
+                    <h2 className="text-xl font-bold text-slate-900">
+                        Your Assignments
+                    </h2>
+
+                    <p className="text-sm text-slate-500 mt-1">
+                        Manage and update the progress of your assigned work.
+                    </p>
+
+                </div>
+
+
+                <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-xl">
+
+                    <span className="w-2 h-2 rounded-full bg-indigo-500" />
+
+                    {tasks.length} Active Records
+
+                </div>
+
+            </div>
+
+
+            {/* =====================================================
+                NO TASKS
+            ===================================================== */}
 
             {tasks.length === 0 ? (
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-14 text-center">
 
-                    <div className="text-6xl mb-4">
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center text-4xl">
                         🎉
                     </div>
 
-                    <h2 className="text-2xl font-bold text-gray-800">
-                        No tasks assigned
+                    <h2 className="text-2xl font-bold text-slate-900 mt-6">
+                        You're all caught up!
                     </h2>
 
-                    <p className="text-gray-500 mt-2">
+                    <p className="text-slate-500 mt-2 max-w-md mx-auto">
                         You currently don't have any tasks assigned to you.
+                        New assignments will appear here when available.
                     </p>
 
                 </div>
@@ -272,26 +434,30 @@ const EmployeeTasks = () => {
                     TASK LIST
                 ===================================================== */
 
-                <div className="space-y-5">
+                <div className="space-y-4">
 
                     {tasks.map((task) => (
 
                         <div
                             key={task.id}
-                            className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6"
+                            className="group bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200"
                         >
 
-                            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                            <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+
 
                                 {/* =================================================
-                    TASK INFORMATION
-                ================================================= */}
+                                    TASK INFORMATION
+                                ================================================= */}
 
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-0">
 
-                                    <div className="flex flex-wrap items-center gap-3">
 
-                                        <h2 className="text-xl font-bold text-gray-900">
+                                    {/* TITLE + BADGES */}
+
+                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+
+                                        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
                                             {task.title}
                                         </h2>
 
@@ -299,67 +465,79 @@ const EmployeeTasks = () => {
                                         {/* PRIORITY */}
 
                                         <span
-                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                task.priority === "HIGH"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : task.priority === "MEDIUM"
-                                                        ? "bg-yellow-100 text-yellow-700"
-                                                        : "bg-green-100 text-green-700"
-                                            }`}
+                                            className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide border ${getPriorityClass(
+                                                task.priority
+                                            )}`}
                                         >
-                      {task.priority}
-                    </span>
+                                            {task.priority}
+                                        </span>
 
 
                                         {/* STATUS */}
 
                                         <span
-                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                task.status === "COMPLETED"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : task.status === "IN_PROGRESS"
-                                                        ? "bg-blue-100 text-blue-700"
-                                                        : "bg-gray-100 text-gray-700"
-                                            }`}
+                                            className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide border ${getStatusClass(
+                                                task.status
+                                            )}`}
                                         >
-                      {task.status}
-                    </span>
+                                            {task.status.replace("_", " ")}
+                                        </span>
 
                                     </div>
 
 
                                     {/* DESCRIPTION */}
 
-                                    <p className="text-gray-600 mt-3">
-                                        {task.description}
+                                    <p className="text-slate-500 mt-3 leading-relaxed max-w-3xl">
+                                        {task.description || "No task description provided."}
                                     </p>
 
 
-                                    {/* TASK DETAILS */}
+                                    {/* DETAILS */}
 
-                                    <div className="flex flex-wrap gap-6 mt-5 text-sm">
+                                    <div className="flex flex-wrap gap-6 sm:gap-10 mt-6">
+
+
+                                        {/* DEADLINE */}
 
                                         <div>
 
-                      <span className="text-gray-400">
-                        Deadline
-                      </span>
+                                            <p className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                                Deadline
+                                            </p>
 
-                                            <p className="font-semibold text-gray-700 mt-1">
+                                            <p className="font-semibold text-slate-700 mt-1.5 text-sm">
                                                 📅 {task.deadline}
                                             </p>
 
                                         </div>
 
 
+                                        {/* ASSIGNED BY */}
+
                                         <div>
 
-                      <span className="text-gray-400">
-                        Assigned By
-                      </span>
+                                            <p className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                                Assigned By
+                                            </p>
 
-                                            <p className="font-semibold text-gray-700 mt-1">
+                                            <p className="font-semibold text-slate-700 mt-1.5 text-sm">
                                                 👤 {task.managerName || "Admin"}
+                                            </p>
+
+                                        </div>
+
+
+                                        {/* TASK ID */}
+
+                                        <div>
+
+                                            <p className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                                Task Reference
+                                            </p>
+
+                                            <p className="font-semibold text-slate-600 mt-1.5 text-sm">
+                                                #{task.id}
                                             </p>
 
                                         </div>
@@ -370,48 +548,66 @@ const EmployeeTasks = () => {
 
 
                                 {/* =================================================
-                    STATUS UPDATE
-                ================================================= */}
+                                    STATUS UPDATE
+                                ================================================= */}
 
-                                <div className="lg:w-52">
+                                <div className="w-full xl:w-56 shrink-0">
 
-                                    <label className="block text-sm font-medium text-gray-600 mb-2">
-                                        Update Status
-                                    </label>
+                                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
 
-                                    <select
-                                        value={task.status}
-                                        disabled={updatingTask === task.id}
-                                        onChange={(e) =>
-                                            updateStatus(
-                                                task.id,
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                                    >
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+                                            Update Progress
+                                        </label>
 
-                                        <option value="PENDING">
-                                            Pending
-                                        </option>
 
-                                        <option value="IN_PROGRESS">
-                                            In Progress
-                                        </option>
+                                        <select
+                                            value={task.status}
+                                            disabled={updatingTask === task.id}
+                                            onChange={(e) =>
+                                                updateStatus(
+                                                    task.id,
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-slate-100 disabled:text-slate-400"
+                                        >
 
-                                        <option value="COMPLETED">
-                                            Completed
-                                        </option>
+                                            <option value="PENDING">
+                                                Pending
+                                            </option>
 
-                                    </select>
+                                            <option value="IN_PROGRESS">
+                                                In Progress
+                                            </option>
 
-                                    {updatingTask === task.id && (
+                                            <option value="COMPLETED">
+                                                Completed
+                                            </option>
 
-                                        <p className="text-sm text-gray-400 mt-2">
-                                            Updating...
-                                        </p>
+                                        </select>
 
-                                    )}
+
+                                        {updatingTask === task.id ? (
+
+                                            <div className="flex items-center gap-2 mt-3">
+
+                                                <div className="w-3 h-3 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+
+                                                <p className="text-xs text-indigo-600 font-medium">
+                                                    Updating task...
+                                                </p>
+
+                                            </div>
+
+                                        ) : (
+
+                                            <p className="text-xs text-slate-400 mt-3">
+                                                Changes are saved automatically
+                                            </p>
+
+                                        )}
+
+                                    </div>
 
                                 </div>
 

@@ -4,15 +4,10 @@ import axios from "axios";
 function EmployeeAttendance() {
 
     const [employeeId, setEmployeeId] = useState(null);
-
     const [todayAttendance, setTodayAttendance] = useState(null);
-
     const [attendanceList, setAttendanceList] = useState([]);
-
     const [loading, setLoading] = useState(true);
-
     const [actionLoading, setActionLoading] = useState(false);
-
     const [error, setError] = useState("");
 
 
@@ -66,10 +61,6 @@ function EmployeeAttendance() {
 
             const token = localStorage.getItem("token");
 
-            // -------------------------------
-            // GET ATTENDANCE HISTORY
-            // -------------------------------
-
             const historyResponse = await axios.get(
                 `http://localhost:8080/api/attendance/employee/${id}`,
                 {
@@ -79,14 +70,8 @@ function EmployeeAttendance() {
                 }
             );
 
-            setAttendanceList(
-                historyResponse.data
-            );
+            setAttendanceList(historyResponse.data);
 
-
-            // -------------------------------
-            // GET TODAY ATTENDANCE
-            // -------------------------------
 
             try {
 
@@ -99,15 +84,12 @@ function EmployeeAttendance() {
                     }
                 );
 
-                setTodayAttendance(
-                    todayResponse.data
-                );
+                setTodayAttendance(todayResponse.data);
 
             } catch (todayError) {
 
-                // No attendance marked today
-
                 setTodayAttendance(null);
+
             }
 
         } catch (error) {
@@ -125,6 +107,7 @@ function EmployeeAttendance() {
         } finally {
 
             setLoading(false);
+
         }
     };
 
@@ -146,6 +129,7 @@ function EmployeeAttendance() {
             } else {
 
                 setLoading(false);
+
             }
         };
 
@@ -163,7 +147,6 @@ function EmployeeAttendance() {
         if (!employeeId) return;
 
         setActionLoading(true);
-
         setError("");
 
         try {
@@ -199,6 +182,7 @@ function EmployeeAttendance() {
         } finally {
 
             setActionLoading(false);
+
         }
     };
 
@@ -212,7 +196,6 @@ function EmployeeAttendance() {
         if (!employeeId) return;
 
         setActionLoading(true);
-
         setError("");
 
         try {
@@ -248,6 +231,7 @@ function EmployeeAttendance() {
         } finally {
 
             setActionLoading(false);
+
         }
     };
 
@@ -256,8 +240,7 @@ function EmployeeAttendance() {
     // CALCULATE STATISTICS
     // =========================================
 
-    const totalDays =
-        attendanceList.length;
+    const totalDays = attendanceList.length;
 
     const presentDays =
         attendanceList.filter(
@@ -289,9 +272,7 @@ function EmployeeAttendance() {
 
     const formatTime = (time) => {
 
-        if (!time) {
-            return "--";
-        }
+        if (!time) return "--";
 
         return new Date(time).toLocaleTimeString(
             [],
@@ -309,9 +290,7 @@ function EmployeeAttendance() {
 
     const formatDate = (date) => {
 
-        if (!date) {
-            return "--";
-        }
+        if (!date) return "--";
 
         return new Date(
             date + "T00:00:00"
@@ -327,23 +306,49 @@ function EmployeeAttendance() {
 
 
     // =========================================
+    // STATUS STYLE
+    // =========================================
+
+    const getStatusStyle = (status) => {
+
+        if (status === "PRESENT") {
+            return "bg-emerald-100 text-emerald-700 border border-emerald-200";
+        }
+
+        if (status === "HALF_DAY") {
+            return "bg-amber-100 text-amber-700 border border-amber-200";
+        }
+
+        if (status === "ABSENT") {
+            return "bg-red-100 text-red-700 border border-red-200";
+        }
+
+        return "bg-slate-100 text-slate-700 border border-slate-200";
+    };
+
+
+    // =========================================
     // LOADING
     // =========================================
 
     if (loading) {
 
         return (
-            <div className="p-6">
 
-                <h1 className="text-3xl font-bold">
-                    Attendance
-                </h1>
+            <div className="flex justify-center items-center h-64">
 
-                <p className="text-gray-500 mt-2">
-                    Loading attendance...
-                </p>
+                <div className="text-center">
+
+                    <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto" />
+
+                    <p className="text-slate-500 mt-4">
+                        Loading attendance...
+                    </p>
+
+                </div>
 
             </div>
+
         );
     }
 
@@ -354,7 +359,8 @@ function EmployeeAttendance() {
 
     return (
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-8">
+
 
             {/* =================================
                 HEADER
@@ -362,11 +368,15 @@ function EmployeeAttendance() {
 
             <div>
 
-                <h1 className="text-3xl font-bold text-gray-900">
+                <p className="text-indigo-600 font-medium">
+                    Employee Workspace
+                </p>
+
+                <h1 className="text-4xl font-bold text-slate-900 mt-1">
                     Attendance
                 </h1>
 
-                <p className="text-gray-500 mt-1">
+                <p className="text-slate-500 mt-2 text-lg">
                     Track your daily attendance and working hours.
                 </p>
 
@@ -379,9 +389,17 @@ function EmployeeAttendance() {
 
             {error && (
 
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl">
 
-                    {error}
+                    <div className="flex items-center gap-3">
+
+                        <span className="text-xl">
+                            ⚠️
+                        </span>
+
+                        {error}
+
+                    </div>
 
                 </div>
 
@@ -389,131 +407,220 @@ function EmployeeAttendance() {
 
 
             {/* =================================
-                TODAY CARD
+                TODAY ATTENDANCE
             ================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-                <div className="flex justify-between items-center">
 
-                    <div>
+                <div className="p-6 md:p-8">
 
-                        <p className="text-sm text-gray-500">
-                            Today's Attendance
-                        </p>
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
-                        <h2 className="text-2xl font-bold mt-1">
 
-                            {todayAttendance
-                                ? todayAttendance.status
-                                : "Not Marked"}
+                        {/* STATUS */}
 
-                        </h2>
+                        <div className="flex items-center gap-5">
+
+                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${
+                                todayAttendance
+                                    ? "bg-emerald-100"
+                                    : "bg-indigo-100"
+                            }`}>
+                                {todayAttendance ? "✓" : "🕐"}
+                            </div>
+
+
+                            <div>
+
+                                <p className="text-sm font-medium text-slate-500">
+                                    Today's Attendance
+                                </p>
+
+                                <div className="flex items-center gap-3 mt-1">
+
+                                    <h2 className="text-2xl font-bold text-slate-900">
+
+                                        {todayAttendance
+                                            ? todayAttendance.status
+                                                ?.replace("_", " ")
+                                            : "Not Marked"}
+
+                                    </h2>
+
+                                    {todayAttendance && (
+
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
+                                            todayAttendance.status
+                                        )}`}>
+
+                                            Active
+
+                                        </span>
+
+                                    )}
+
+                                </div>
+
+                                <p className="text-sm text-slate-400 mt-1">
+                                    Mark your attendance for today
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* ACTION BUTTONS */}
+
+                        <div className="flex flex-col sm:flex-row gap-3">
+
+                            <button
+                                onClick={handleCheckIn}
+                                disabled={
+                                    actionLoading ||
+                                    todayAttendance !== null
+                                }
+                                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                                    actionLoading ||
+                                    todayAttendance !== null
+                                        ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                                        : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-200"
+                                }`}
+                            >
+
+                                {actionLoading
+                                    ? "Processing..."
+                                    : "✓ Check In"}
+
+                            </button>
+
+
+                            <button
+                                onClick={handleCheckOut}
+                                disabled={
+                                    actionLoading ||
+                                    !todayAttendance ||
+                                    todayAttendance.checkOutTime !== null
+                                }
+                                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                                    actionLoading ||
+                                    !todayAttendance ||
+                                    todayAttendance.checkOutTime !== null
+                                        ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                                        : "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200"
+                                }`}
+                            >
+
+                                {actionLoading
+                                    ? "Processing..."
+                                    : "→ Check Out"}
+
+                            </button>
+
+                        </div>
 
                     </div>
 
 
-                    <div className="flex gap-3">
+                    {/* TODAY DETAILS */}
 
-                        <button
-                            onClick={handleCheckIn}
-                            disabled={
-                                actionLoading ||
-                                todayAttendance !== null
-                            }
-                            className={`px-5 py-2.5 rounded-lg font-medium text-white ${
-                                actionLoading ||
-                                todayAttendance !== null
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-green-600 hover:bg-green-700"
-                            }`}
-                        >
+                    {todayAttendance && (
 
-                            {actionLoading
-                                ? "Processing..."
-                                : "Check In"}
-
-                        </button>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 pt-6 border-t border-slate-100">
 
 
-                        <button
-                            onClick={handleCheckOut}
-                            disabled={
-                                actionLoading ||
-                                !todayAttendance ||
-                                todayAttendance.checkOutTime !== null
-                            }
-                            className={`px-5 py-2.5 rounded-lg font-medium text-white ${
-                                actionLoading ||
-                                !todayAttendance ||
-                                todayAttendance.checkOutTime !== null
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-blue-600 hover:bg-blue-700"
-                            }`}
-                        >
+                            {/* DATE */}
 
-                            Check Out
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
 
-                        </button>
+                                <div className="flex items-center gap-3">
 
-                    </div>
+                                    <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                                        📅
+                                    </div>
+
+                                    <div>
+
+                                        <p className="text-xs text-slate-500">
+                                            Date
+                                        </p>
+
+                                        <p className="font-semibold text-slate-800 mt-1">
+                                            {formatDate(
+                                                todayAttendance.attendanceDate
+                                            )}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* CHECK IN */}
+
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                        🟢
+                                    </div>
+
+                                    <div>
+
+                                        <p className="text-xs text-slate-500">
+                                            Check In
+                                        </p>
+
+                                        <p className="font-semibold text-slate-800 mt-1">
+                                            {formatTime(
+                                                todayAttendance.checkInTime
+                                            )}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* CHECK OUT */}
+
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                        🔵
+                                    </div>
+
+                                    <div>
+
+                                        <p className="text-xs text-slate-500">
+                                            Check Out
+                                        </p>
+
+                                        <p className="font-semibold text-slate-800 mt-1">
+                                            {formatTime(
+                                                todayAttendance.checkOutTime
+                                            )}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    )}
 
                 </div>
-
-
-                {/* TODAY DETAILS */}
-
-                {todayAttendance && (
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-
-                            <p className="text-sm text-gray-500">
-                                Date
-                            </p>
-
-                            <p className="font-semibold mt-1">
-                                {formatDate(
-                                    todayAttendance.attendanceDate
-                                )}
-                            </p>
-
-                        </div>
-
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-
-                            <p className="text-sm text-gray-500">
-                                Check In
-                            </p>
-
-                            <p className="font-semibold mt-1">
-                                {formatTime(
-                                    todayAttendance.checkInTime
-                                )}
-                            </p>
-
-                        </div>
-
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-
-                            <p className="text-sm text-gray-500">
-                                Check Out
-                            </p>
-
-                            <p className="font-semibold mt-1">
-                                {formatTime(
-                                    todayAttendance.checkOutTime
-                                )}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                )}
 
             </div>
 
@@ -522,18 +629,35 @@ function EmployeeAttendance() {
                 STATISTICS
             ================================= */}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-                {/* TOTAL */}
 
-                <div className="bg-white rounded-xl shadow-sm border p-5">
+                {/* TOTAL DAYS */}
 
-                    <p className="text-sm text-gray-500">
-                        Total Days
-                    </p>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
 
-                    <p className="text-3xl font-bold mt-2">
-                        {totalDays}
+                    <div className="flex justify-between items-start">
+
+                        <div>
+
+                            <p className="text-slate-500 text-sm">
+                                Total Days
+                            </p>
+
+                            <p className="text-4xl font-bold text-slate-900 mt-3">
+                                {totalDays}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-xl">
+                            📅
+                        </div>
+
+                    </div>
+
+                    <p className="text-slate-400 text-sm mt-4">
+                        Attendance records
                     </p>
 
                 </div>
@@ -541,14 +665,30 @@ function EmployeeAttendance() {
 
                 {/* PRESENT */}
 
-                <div className="bg-white rounded-xl shadow-sm border p-5">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
 
-                    <p className="text-sm text-gray-500">
-                        Present
-                    </p>
+                    <div className="flex justify-between items-start">
 
-                    <p className="text-3xl font-bold text-green-600 mt-2">
-                        {presentDays}
+                        <div>
+
+                            <p className="text-slate-500 text-sm">
+                                Present
+                            </p>
+
+                            <p className="text-4xl font-bold text-emerald-600 mt-3">
+                                {presentDays}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl">
+                            ✓
+                        </div>
+
+                    </div>
+
+                    <p className="text-slate-400 text-sm mt-4">
+                        Days marked present
                     </p>
 
                 </div>
@@ -556,30 +696,122 @@ function EmployeeAttendance() {
 
                 {/* HALF DAY */}
 
-                <div className="bg-white rounded-xl shadow-sm border p-5">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
 
-                    <p className="text-sm text-gray-500">
-                        Half Days
-                    </p>
+                    <div className="flex justify-between items-start">
 
-                    <p className="text-3xl font-bold text-yellow-600 mt-2">
-                        {halfDays}
+                        <div>
+
+                            <p className="text-slate-500 text-sm">
+                                Half Days
+                            </p>
+
+                            <p className="text-4xl font-bold text-amber-500 mt-3">
+                                {halfDays}
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-xl">
+                            ◐
+                        </div>
+
+                    </div>
+
+                    <p className="text-slate-400 text-sm mt-4">
+                        Partial attendance
                     </p>
 
                 </div>
 
 
-                {/* PERCENTAGE */}
+                {/* ATTENDANCE */}
 
-                <div className="bg-white rounded-xl shadow-sm border p-5">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
 
-                    <p className="text-sm text-gray-500">
-                        Attendance
+                    <div className="flex justify-between items-start">
+
+                        <div>
+
+                            <p className="text-slate-500 text-sm">
+                                Attendance
+                            </p>
+
+                            <p className="text-4xl font-bold text-indigo-600 mt-3">
+                                {attendancePercentage}%
+                            </p>
+
+                        </div>
+
+                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-xl">
+                            📊
+                        </div>
+
+                    </div>
+
+                    <p className="text-slate-400 text-sm mt-4">
+                        Overall attendance rate
                     </p>
 
-                    <p className="text-3xl font-bold text-blue-600 mt-2">
-                        {attendancePercentage}%
-                    </p>
+                </div>
+
+            </div>
+
+
+            {/* =================================
+                ATTENDANCE SUMMARY
+            ================================= */}
+
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+
+                    <div>
+
+                        <p className="text-indigo-600 font-medium">
+                            Attendance Overview
+                        </p>
+
+                        <h2 className="text-2xl font-bold text-slate-900 mt-1">
+                            Your attendance progress
+                        </h2>
+
+                        <p className="text-slate-500 mt-2">
+                            Maintain consistent attendance to improve your overall performance.
+                        </p>
+
+                    </div>
+
+
+                    <div className="w-full md:w-64">
+
+                        <div className="flex justify-between text-sm mb-2">
+
+                            <span className="text-slate-500">
+                                Attendance Rate
+                            </span>
+
+                            <span className="font-semibold text-slate-800">
+                                {attendancePercentage}%
+                            </span>
+
+                        </div>
+
+                        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+
+                            <div
+                                className="bg-indigo-600 h-3 rounded-full transition-all duration-500"
+                                style={{
+                                    width: `${Math.min(
+                                        attendancePercentage,
+                                        100
+                                    )}%`,
+                                }}
+                            />
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -590,27 +822,55 @@ function EmployeeAttendance() {
                 ATTENDANCE HISTORY
             ================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-                <div className="p-6 border-b">
 
-                    <h2 className="text-xl font-bold">
-                        Attendance History
-                    </h2>
+                {/* TABLE HEADER */}
 
-                    <p className="text-sm text-gray-500 mt-1">
-                        Your attendance records
-                    </p>
+                <div className="p-6 md:p-8 border-b border-slate-100">
+
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+                        <div>
+
+                            <h2 className="text-2xl font-bold text-slate-900">
+                                Attendance History
+                            </h2>
+
+                            <p className="text-sm text-slate-500 mt-1">
+                                View your complete attendance records.
+                            </p>
+
+                        </div>
+
+
+                        <div className="px-4 py-2 rounded-lg bg-slate-100 text-sm text-slate-600">
+
+                            {totalDays} Records
+
+                        </div>
+
+                    </div>
 
                 </div>
 
 
+                {/* EMPTY STATE */}
+
                 {attendanceList.length === 0 ? (
 
-                    <div className="p-10 text-center">
+                    <div className="py-16 text-center">
 
-                        <p className="text-gray-500">
-                            No attendance records found.
+                        <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl mx-auto">
+                            📅
+                        </div>
+
+                        <h3 className="text-xl font-semibold text-slate-800 mt-5">
+                            No attendance records
+                        </h3>
+
+                        <p className="text-slate-500 mt-2">
+                            Your attendance history will appear here.
                         </p>
 
                     </div>
@@ -621,23 +881,24 @@ function EmployeeAttendance() {
 
                         <table className="w-full">
 
-                            <thead className="bg-gray-50">
+
+                            <thead className="bg-slate-50 border-b border-slate-100">
 
                             <tr>
 
-                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Date
                                 </th>
 
-                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Check In
                                 </th>
 
-                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Check Out
                                 </th>
 
-                                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Status
                                 </th>
 
@@ -646,58 +907,83 @@ function EmployeeAttendance() {
                             </thead>
 
 
-                            <tbody>
+                            <tbody className="divide-y divide-slate-100">
 
                             {attendanceList.map(
                                 (attendance) => (
 
                                     <tr
                                         key={attendance.id}
-                                        className="border-t hover:bg-gray-50"
+                                        className="hover:bg-slate-50 transition-colors"
                                     >
 
-                                        <td className="px-6 py-4">
+                                        {/* DATE */}
 
-                                            {formatDate(
-                                                attendance.attendanceDate
-                                            )}
+                                        <td className="px-6 py-5">
 
-                                        </td>
+                                            <div className="flex items-center gap-3">
 
+                                                <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-sm">
+                                                    📅
+                                                </div>
 
-                                        <td className="px-6 py-4">
+                                                <span className="font-medium text-slate-700">
 
-                                            {formatTime(
-                                                attendance.checkInTime
-                                            )}
+                                                        {formatDate(
+                                                            attendance.attendanceDate
+                                                        )}
 
-                                        </td>
+                                                    </span>
 
-
-                                        <td className="px-6 py-4">
-
-                                            {formatTime(
-                                                attendance.checkOutTime
-                                            )}
+                                            </div>
 
                                         </td>
 
 
-                                        <td className="px-6 py-4">
+                                        {/* CHECK IN */}
+
+                                        <td className="px-6 py-5">
+
+                                                <span className="font-medium text-emerald-600">
+
+                                                    {formatTime(
+                                                        attendance.checkInTime
+                                                    )}
+
+                                                </span>
+
+                                        </td>
+
+
+                                        {/* CHECK OUT */}
+
+                                        <td className="px-6 py-5">
+
+                                                <span className="font-medium text-indigo-600">
+
+                                                    {formatTime(
+                                                        attendance.checkOutTime
+                                                    )}
+
+                                                </span>
+
+                                        </td>
+
+
+                                        {/* STATUS */}
+
+                                        <td className="px-6 py-5">
 
                                                 <span
-                                                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                        attendance.status ===
-                                                        "PRESENT"
-                                                            ? "bg-green-100 text-green-700"
-                                                            : attendance.status ===
-                                                            "HALF_DAY"
-                                                                ? "bg-yellow-100 text-yellow-700"
-                                                                : "bg-red-100 text-red-700"
-                                                    }`}
+                                                    className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusStyle(
+                                                        attendance.status
+                                                    )}`}
                                                 >
 
-                                                    {attendance.status}
+                                                    {attendance.status?.replace(
+                                                        "_",
+                                                        " "
+                                                    )}
 
                                                 </span>
 

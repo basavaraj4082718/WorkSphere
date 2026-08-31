@@ -42,33 +42,19 @@ const ManagerTaskManagement = () => {
                 },
             };
 
-
-            // =========================================
-            // GET LOGGED-IN MANAGER
-            // =========================================
-
             const managerResponse = await axios.get(
                 "http://localhost:8080/api/dashboard/manager/me",
                 config
             );
 
-            const managerId =
-                managerResponse.data.managerId;
+            const managerId = managerResponse.data.managerId;
 
-
-            // =========================================
-            // GET ALL EMPLOYEES
-            // =========================================
 
             const employeeResponse = await axios.get(
                 "http://localhost:8080/api/employees",
                 config
             );
 
-
-            // =========================================
-            // GET ONLY THIS MANAGER'S EMPLOYEES
-            // =========================================
 
             const myEmployees =
                 employeeResponse.data.filter(
@@ -78,26 +64,17 @@ const ManagerTaskManagement = () => {
                 );
 
 
-            // Get employee IDs
             const myEmployeeIds =
                 myEmployees.map(
                     (employee) => Number(employee.id)
                 );
 
 
-            // =========================================
-            // GET ALL TASKS
-            // =========================================
-
             const taskResponse = await axios.get(
                 "http://localhost:8080/api/tasks",
                 config
             );
 
-
-            // =========================================
-            // KEEP ONLY MY EMPLOYEES' TASKS
-            // =========================================
 
             const myTasks =
                 taskResponse.data.filter(
@@ -113,20 +90,7 @@ const ManagerTaskManagement = () => {
 
         } catch (error) {
 
-            console.log(
-                "MANAGER TASK ERROR:",
-                error
-            );
-
-            console.log(
-                "STATUS:",
-                error.response?.status
-            );
-
-            console.log(
-                "DATA:",
-                error.response?.data
-            );
+            console.log("MANAGER TASK ERROR:", error);
 
             alert(
                 error.response?.data?.message ||
@@ -146,40 +110,30 @@ const ManagerTaskManagement = () => {
 
         try {
 
-            const token =
-                localStorage.getItem("token");
+            const token = localStorage.getItem("token");
+
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
 
             const response = await axios.get(
                 "http://localhost:8080/api/employees",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                config
             );
 
 
-            // =========================================
-            // GET LOGGED-IN MANAGER
-            // =========================================
-
             const managerResponse = await axios.get(
                 "http://localhost:8080/api/dashboard/manager/me",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                config
             );
 
 
             const managerId =
                 managerResponse.data.managerId;
 
-
-            // =========================================
-            // ONLY THIS MANAGER'S EMPLOYEES
-            // =========================================
 
             const myEmployees =
                 response.data.filter(
@@ -335,6 +289,26 @@ const ManagerTaskManagement = () => {
             description: task.description,
             priority: task.priority,
             deadline: task.deadline,
+        });
+
+        setShowForm(true);
+
+    };
+
+
+    // =========================================
+    // OPEN CREATE TASK MODAL
+    // =========================================
+
+    const openCreateTask = () => {
+
+        setEditingTask(null);
+
+        setFormData({
+            title: "",
+            description: "",
+            priority: "MEDIUM",
+            deadline: "",
         });
 
         setShowForm(true);
@@ -500,28 +474,21 @@ const ManagerTaskManagement = () => {
     // STATISTICS
     // =========================================
 
-    const totalTasks =
-        tasks.length;
-
+    const totalTasks = tasks.length;
 
     const pendingTasks =
         tasks.filter(
-            task =>
-                task.status === "PENDING"
+            task => task.status === "PENDING"
         ).length;
-
 
     const inProgressTasks =
         tasks.filter(
-            task =>
-                task.status === "IN_PROGRESS"
+            task => task.status === "IN_PROGRESS"
         ).length;
-
 
     const completedTasks =
         tasks.filter(
-            task =>
-                task.status === "COMPLETED"
+            task => task.status === "COMPLETED"
         ).length;
 
 
@@ -533,11 +500,27 @@ const ManagerTaskManagement = () => {
 
         return (
 
-            <div className="flex justify-center items-center h-64">
+            <div className="flex min-h-[600px] items-center justify-center">
 
-                <p className="text-gray-500 text-lg">
-                    Loading tasks...
-                </p>
+                <div className="text-center">
+
+                    <div className="relative mx-auto h-14 w-14">
+
+                        <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+
+                        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+
+                    </div>
+
+                    <h3 className="mt-6 text-lg font-semibold text-slate-800">
+                        Loading Tasks
+                    </h3>
+
+                    <p className="mt-2 text-sm text-slate-500">
+                        Preparing your team's workspace...
+                    </p>
+
+                </div>
 
             </div>
 
@@ -548,545 +531,783 @@ const ManagerTaskManagement = () => {
 
     return (
 
-        <div className="space-y-6">
+        <div className="space-y-8">
 
 
-            {/* =================================
-                HEADER
-            ================================= */}
+            {/* HERO HEADER */}
 
-            <div className="flex justify-between items-center">
+            <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-8 md:px-10 md:py-10">
 
-                <div>
+                <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl"></div>
 
-                    <p className="text-blue-600 font-medium">
-                        Manager Portal
-                    </p>
-
-                    <h1 className="text-3xl font-bold mt-1">
-                        Task Management
-                    </h1>
-
-                    <p className="text-gray-500 mt-2">
-                        Create, assign and manage tasks for your team.
-                    </p>
-
-                </div>
+                <div className="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-violet-500/10 blur-3xl"></div>
 
 
-                <button
-                    onClick={() => {
+                <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-                        setEditingTask(null);
+                    <div>
 
-                        setFormData({
-                            title: "",
-                            description: "",
-                            priority: "MEDIUM",
-                            deadline: "",
-                        });
+                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-1.5">
 
-                        setShowForm(true);
+                            <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
 
-                    }}
-                    className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
-                >
-                    + Create Task
-                </button>
+                            <span className="text-xs font-medium text-indigo-300">
+                                Team Workspace
+                            </span>
 
-            </div>
+                        </div>
 
 
-            {/* =================================
-                STATISTICS
-            ================================= */}
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                        <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+                            Task Management
+                        </h1>
 
 
-                <div className="bg-white rounded-xl shadow p-5">
+                        <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400 md:text-base">
+                            Create, assign and track tasks across your team
+                            from one centralized workspace.
+                        </p>
 
-                    <p className="text-gray-500">
-                        Total Tasks
-                    </p>
-
-                    <p className="text-3xl font-bold mt-2">
-                        {totalTasks}
-                    </p>
-
-                </div>
+                    </div>
 
 
-                <div className="bg-white rounded-xl shadow p-5">
-
-                    <p className="text-gray-500">
-                        Pending
-                    </p>
-
-                    <p className="text-3xl font-bold text-yellow-600 mt-2">
-                        {pendingTasks}
-                    </p>
-
-                </div>
-
-
-                <div className="bg-white rounded-xl shadow p-5">
-
-                    <p className="text-gray-500">
-                        In Progress
-                    </p>
-
-                    <p className="text-3xl font-bold text-blue-600 mt-2">
-                        {inProgressTasks}
-                    </p>
-
-                </div>
-
-
-                <div className="bg-white rounded-xl shadow p-5">
-
-                    <p className="text-gray-500">
-                        Completed
-                    </p>
-
-                    <p className="text-3xl font-bold text-green-600 mt-2">
-                        {completedTasks}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {/* =================================
-                SEARCH
-            ================================= */}
-
-            <div className="bg-white rounded-xl shadow p-4">
-
-                <input
-                    type="text"
-                    placeholder="Search tasks..."
-                    value={search}
-                    onChange={(e) =>
-                        setSearch(e.target.value)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-
-            </div>
-
-
-            {/* =================================
-                CREATE / EDIT FORM
-            ================================= */}
-
-            {showForm && (
-
-                <div className="bg-white rounded-xl shadow p-6">
-
-                    <h2 className="text-xl font-semibold mb-5">
-
-                        {editingTask
-                            ? "Edit Task"
-                            : "Create New Task"}
-
-                    </h2>
-
-
-                    <form
-                        onSubmit={handleSubmit}
-                        className="space-y-4"
+                    <button
+                        onClick={openCreateTask}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-slate-100"
                     >
 
+                        <span className="text-lg">
+                            +
+                        </span>
 
-                        <input
-                            type="text"
-                            name="title"
-                            placeholder="Task title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            className="w-full border p-3 rounded-lg"
-                            required
-                        />
+                        Create Task
 
-
-                        <textarea
-                            name="description"
-                            placeholder="Task description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows="4"
-                            className="w-full border p-3 rounded-lg"
-                            required
-                        />
-
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
-                            <select
-                                name="priority"
-                                value={formData.priority}
-                                onChange={handleChange}
-                                className="border p-3 rounded-lg"
-                                required
-                            >
-
-                                <option value="LOW">
-                                    LOW
-                                </option>
-
-                                <option value="MEDIUM">
-                                    MEDIUM
-                                </option>
-
-                                <option value="HIGH">
-                                    HIGH
-                                </option>
-
-                            </select>
-
-
-                            <input
-                                type="date"
-                                name="deadline"
-                                value={formData.deadline}
-                                onChange={handleChange}
-                                className="border p-3 rounded-lg"
-                                min={
-                                    new Date()
-                                        .toISOString()
-                                        .split("T")[0]
-                                }
-                                required
-                            />
-
-                        </div>
-
-
-                        <div className="flex gap-3">
-
-
-                            <button
-                                type="submit"
-                                className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700"
-                            >
-
-                                {editingTask
-                                    ? "Update Task"
-                                    : "Create Task"}
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onClick={resetForm}
-                                className="bg-gray-500 text-white px-5 py-3 rounded-lg hover:bg-gray-600"
-                            >
-                                Cancel
-                            </button>
-
-                        </div>
-
-                    </form>
+                    </button>
 
                 </div>
 
-            )}
+            </section>
 
 
-            {/* =================================
-                TASK TABLE
-            ================================= */}
+            {/* SECTION HEADER */}
 
-            <div className="bg-white rounded-xl shadow overflow-x-auto">
+            <div>
 
-                <table className="w-full">
+                <p className="text-sm font-semibold text-indigo-600">
+                    Task Overview
+                </p>
 
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+                    Team productivity at a glance
+                </h2>
 
-                    <thead className="bg-gray-100">
+                <p className="mt-1 text-sm text-slate-500">
+                    Monitor task progress and manage your team's workload.
+                </p>
 
-                    <tr>
-
-                        <th className="text-left p-4">
-                            Task
-                        </th>
-
-                        <th className="text-left p-4">
-                            Employee
-                        </th>
-
-                        <th className="text-left p-4">
-                            Priority
-                        </th>
-
-                        <th className="text-left p-4">
-                            Deadline
-                        </th>
-
-                        <th className="text-left p-4">
-                            Status
-                        </th>
-
-                        <th className="text-left p-4">
-                            Actions
-                        </th>
-
-                    </tr>
-
-                    </thead>
+            </div>
 
 
-                    <tbody>
+            {/* STATISTICS */}
 
-                    {filteredTasks.map((task) => (
+            <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-                        <tr
-                            key={task.id}
-                            className="border-t hover:bg-gray-50"
-                        >
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl">
 
+                    <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-indigo-50 transition group-hover:scale-125"></div>
 
-                            {/* TASK */}
+                    <div className="relative flex items-start justify-between">
 
-                            <td className="p-4">
+                        <div>
 
-                                <p className="font-semibold">
-                                    {task.title}
-                                </p>
+                            <p className="text-sm font-medium text-slate-500">
+                                Total Tasks
+                            </p>
 
-                                <p className="text-sm text-gray-500 max-w-xs truncate">
-                                    {task.description}
-                                </p>
+                            <p className="mt-3 text-3xl font-bold text-slate-900">
+                                {totalTasks}
+                            </p>
 
-                            </td>
+                            <p className="mt-3 text-xs text-slate-400">
+                                Tasks under your management
+                            </p>
 
+                        </div>
 
-                            {/* EMPLOYEE */}
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-xl">
+                            📋
+                        </div>
 
-                            <td className="p-4">
+                    </div>
 
-                                {task.employeeName ? (
-
-                                    <span className="font-medium">
-                                        {task.employeeName}
-                                    </span>
-
-                                ) : (
-
-                                    <span className="text-gray-400">
-                                        Not assigned
-                                    </span>
-
-                                )}
-
-                            </td>
+                </div>
 
 
-                            {/* PRIORITY */}
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-xl">
 
-                            <td className="p-4">
+                    <div className="relative flex items-start justify-between">
 
-                                <span
-                                    className={`px-3 py-1 rounded-full text-sm ${
-                                        task.priority === "HIGH"
-                                            ? "bg-red-100 text-red-700"
-                                            : task.priority === "MEDIUM"
-                                                ? "bg-yellow-100 text-yellow-700"
-                                                : "bg-green-100 text-green-700"
-                                    }`}
-                                >
+                        <div>
 
-                                    {task.priority}
+                            <p className="text-sm font-medium text-slate-500">
+                                Pending
+                            </p>
 
-                                </span>
+                            <p className="mt-3 text-3xl font-bold text-amber-600">
+                                {pendingTasks}
+                            </p>
 
-                            </td>
+                            <p className="mt-3 text-xs text-slate-400">
+                                Awaiting action
+                            </p>
 
+                        </div>
 
-                            {/* DEADLINE */}
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-xl">
+                            ◷
+                        </div>
 
-                            <td className="p-4">
-                                {task.deadline}
-                            </td>
+                    </div>
 
-
-                            {/* STATUS */}
-
-                            <td className="p-4">
-
-                                <select
-                                    value={task.status}
-                                    onChange={(e) =>
-                                        updateStatus(
-                                            task.id,
-                                            e.target.value
-                                        )
-                                    }
-                                    className="border rounded-lg px-3 py-2"
-                                >
-
-                                    <option value="PENDING">
-                                        PENDING
-                                    </option>
-
-                                    <option value="IN_PROGRESS">
-                                        IN PROGRESS
-                                    </option>
-
-                                    <option value="COMPLETED">
-                                        COMPLETED
-                                    </option>
-
-                                </select>
-
-                            </td>
+                </div>
 
 
-                            {/* ACTIONS */}
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
 
-                            <td className="p-4">
+                    <div className="relative flex items-start justify-between">
 
-                                <div className="flex gap-2">
+                        <div>
 
-                                    <button
-                                        onClick={() =>
-                                            openAssignEmployee(task)
-                                        }
-                                        className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700"
-                                    >
-                                        Assign
-                                    </button>
+                            <p className="text-sm font-medium text-slate-500">
+                                In Progress
+                            </p>
+
+                            <p className="mt-3 text-3xl font-bold text-blue-600">
+                                {inProgressTasks}
+                            </p>
+
+                            <p className="mt-3 text-xs text-slate-400">
+                                Currently being worked on
+                            </p>
+
+                        </div>
+
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-xl">
+                            ↻
+                        </div>
+
+                    </div>
+
+                </div>
 
 
-                                    <button
-                                        onClick={() =>
-                                            handleEdit(task)
-                                        }
-                                        className="bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600"
-                                    >
-                                        Edit
-                                    </button>
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl">
 
-                                </div>
+                    <div className="relative flex items-start justify-between">
 
-                            </td>
+                        <div>
+
+                            <p className="text-sm font-medium text-slate-500">
+                                Completed
+                            </p>
+
+                            <p className="mt-3 text-3xl font-bold text-emerald-600">
+                                {completedTasks}
+                            </p>
+
+                            <p className="mt-3 text-xs text-slate-400">
+                                Successfully delivered
+                            </p>
+
+                        </div>
+
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-xl">
+                            ✓
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {/* SEARCH */}
+
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+
+                <div className="relative">
+
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        🔍
+                    </span>
+
+                    <input
+                        type="text"
+                        placeholder="Search by task, employee, priority or status..."
+                        value={search}
+                        onChange={(e) =>
+                            setSearch(e.target.value)
+                        }
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+                    />
+
+                </div>
+
+            </section>
+
+
+            {/* TASK TABLE */}
+
+            <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+
+                <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div>
+
+                        <h2 className="font-bold text-slate-900">
+                            Team Tasks
+                        </h2>
+
+                        <p className="mt-1 text-sm text-slate-500">
+                            Manage assignments and track task progress.
+                        </p>
+
+                    </div>
+
+
+                    <div className="rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                        {filteredTasks.length} Tasks Found
+                    </div>
+
+                </div>
+
+
+                <div className="overflow-x-auto">
+
+                    <table className="w-full min-w-[1000px]">
+
+                        <thead className="bg-slate-50">
+
+                        <tr>
+
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Task
+                            </th>
+
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Employee
+                            </th>
+
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Priority
+                            </th>
+
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Deadline
+                            </th>
+
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Status
+                            </th>
+
+                            <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Actions
+                            </th>
 
                         </tr>
 
-                    ))}
+                        </thead>
 
-                    </tbody>
 
-                </table>
+                        <tbody className="divide-y divide-slate-100">
+
+                        {filteredTasks.map((task) => (
+
+                            <tr
+                                key={task.id}
+                                className="group transition hover:bg-slate-50/80"
+                            >
+
+                                <td className="px-6 py-5">
+
+                                    <div>
+
+                                        <p className="font-semibold text-slate-800">
+                                            {task.title}
+                                        </p>
+
+                                        <p className="mt-1 max-w-xs truncate text-sm text-slate-500">
+                                            {task.description}
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td className="px-6 py-5">
+
+                                    {task.employeeName ? (
+
+                                        <div className="flex items-center gap-3">
+
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600">
+                                                {task.employeeName
+                                                    ?.charAt(0)
+                                                    ?.toUpperCase()}
+                                            </div>
+
+                                            <span className="font-medium text-slate-700">
+                                                    {task.employeeName}
+                                                </span>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-400">
+                                                Not Assigned
+                                            </span>
+
+                                    )}
+
+                                </td>
+
+
+                                <td className="px-6 py-5">
+
+                                        <span
+                                            className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${
+                                                task.priority === "HIGH"
+                                                    ? "bg-red-50 text-red-600 ring-1 ring-red-100"
+                                                    : task.priority === "MEDIUM"
+                                                        ? "bg-amber-50 text-amber-600 ring-1 ring-amber-100"
+                                                        : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"
+                                            }`}
+                                        >
+                                            {task.priority}
+                                        </span>
+
+                                </td>
+
+
+                                <td className="px-6 py-5">
+
+                                        <span className="text-sm font-medium text-slate-600">
+                                            {task.deadline}
+                                        </span>
+
+                                </td>
+
+
+                                <td className="px-6 py-5">
+
+                                    <select
+                                        value={task.status}
+                                        onChange={(e) =>
+                                            updateStatus(
+                                                task.id,
+                                                e.target.value
+                                            )
+                                        }
+                                        className={`rounded-xl border px-3 py-2 text-xs font-semibold outline-none transition ${
+                                            task.status === "COMPLETED"
+                                                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                                                : task.status === "IN_PROGRESS"
+                                                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                                                    : "border-amber-200 bg-amber-50 text-amber-700"
+                                        }`}
+                                    >
+
+                                        <option value="PENDING">
+                                            PENDING
+                                        </option>
+
+                                        <option value="IN_PROGRESS">
+                                            IN PROGRESS
+                                        </option>
+
+                                        <option value="COMPLETED">
+                                            COMPLETED
+                                        </option>
+
+                                    </select>
+
+                                </td>
+
+
+                                <td className="px-6 py-5">
+
+                                    <div className="flex justify-end gap-2">
+
+                                        <button
+                                            onClick={() =>
+                                                openAssignEmployee(task)
+                                            }
+                                            className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-600 hover:text-white"
+                                        >
+                                            Assign
+                                        </button>
+
+
+                                        <button
+                                            onClick={() =>
+                                                handleEdit(task)
+                                            }
+                                            className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-600 transition hover:bg-amber-500 hover:text-white"
+                                        >
+                                            Edit
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        ))}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
 
                 {filteredTasks.length === 0 && (
 
-                    <div className="text-center py-12">
+                    <div className="px-6 py-16 text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-3xl">
                             📋
                         </div>
 
-                        <h2 className="text-xl font-semibold">
+                        <h2 className="mt-5 text-xl font-bold text-slate-800">
                             No tasks found
                         </h2>
 
-                        <p className="text-gray-500 mt-1">
-                            Create a task or change your search.
+                        <p className="mt-2 text-sm text-slate-500">
+                            Create a new task or try changing your search.
                         </p>
 
                     </div>
 
                 )}
 
-            </div>
+            </section>
 
 
-            {/* =================================
+            {/* =========================================
+                CREATE / EDIT TASK MODAL
+            ========================================= */}
+
+            {showForm && (
+
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+
+                    <div className="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+
+                        {/* MODAL HEADER */}
+
+                        <div className="flex items-center justify-between bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-6 text-white">
+
+                            <div className="flex items-center gap-4">
+
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-xl backdrop-blur">
+
+                                    {editingTask ? "✎" : "+"}
+
+                                </div>
+
+                                <div>
+
+                                    <h2 className="text-xl font-bold">
+
+                                        {editingTask
+                                            ? "Edit Task"
+                                            : "Create New Task"}
+
+                                    </h2>
+
+                                    <p className="mt-1 text-sm text-indigo-100">
+
+                                        {editingTask
+                                            ? "Update task information."
+                                            : "Create a new task for your team."}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                onClick={resetForm}
+                                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-xl transition hover:bg-white/20"
+                            >
+                                ×
+                            </button>
+
+                        </div>
+
+
+                        {/* MODAL FORM */}
+
+                        <form
+                            onSubmit={handleSubmit}
+                            className="max-h-[75vh] space-y-5 overflow-y-auto p-6"
+                        >
+
+                            <div>
+
+                                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                                    Task Title
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="title"
+                                    placeholder="Enter task title"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                                    required
+                                />
+
+                            </div>
+
+
+                            <div>
+
+                                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                                    Task Description
+                                </label>
+
+                                <textarea
+                                    name="description"
+                                    placeholder="Describe the task and expected outcome..."
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows="4"
+                                    className="w-full resize-none rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                                    required
+                                />
+
+                            </div>
+
+
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+                                <div>
+
+                                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                                        Priority
+                                    </label>
+
+                                    <select
+                                        name="priority"
+                                        value={formData.priority}
+                                        onChange={handleChange}
+                                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                                        required
+                                    >
+
+                                        <option value="LOW">
+                                            LOW
+                                        </option>
+
+                                        <option value="MEDIUM">
+                                            MEDIUM
+                                        </option>
+
+                                        <option value="HIGH">
+                                            HIGH
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div>
+
+                                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                                        Deadline
+                                    </label>
+
+                                    <input
+                                        type="date"
+                                        name="deadline"
+                                        value={formData.deadline}
+                                        onChange={handleChange}
+                                        min={
+                                            new Date()
+                                                .toISOString()
+                                                .split("T")[0]
+                                        }
+                                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                                        required
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            {/* BUTTONS */}
+
+                            <div className="flex gap-3 border-t border-slate-100 pt-5">
+
+                                <button
+                                    type="submit"
+                                    className="flex-1 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700"
+                                >
+
+                                    {editingTask
+                                        ? "Update Task"
+                                        : "Create Task"}
+
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    onClick={resetForm}
+                                    className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                                >
+                                    Cancel
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            )}
+
+
+            {/* =========================================
                 ASSIGN EMPLOYEE MODAL
-            ================================= */}
+            ========================================= */}
 
             {showAssign && (
 
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
 
-                    <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
+                    <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
 
-                        <h2 className="text-xl font-semibold mb-4">
-                            Assign Employee
-                        </h2>
+                        {/* MODAL HEADER */}
+
+                        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-6 text-white">
+
+                            <div className="flex items-center gap-4">
+
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-xl backdrop-blur">
+                                    👤
+                                </div>
+
+                                <div>
+
+                                    <h2 className="text-xl font-bold">
+                                        Assign Employee
+                                    </h2>
+
+                                    <p className="mt-1 text-sm text-indigo-100">
+                                        Choose a team member for this task.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
 
-                        <p className="text-gray-500 mb-4">
+                        {/* MODAL CONTENT */}
 
-                            Task:
+                        <div className="p-6">
 
-                            <span className="font-semibold text-gray-800 ml-1">
-                                {assigningTask?.title}
-                            </span>
+                            <div className="mb-6 rounded-2xl bg-slate-50 p-4">
 
-                        </p>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                    Selected Task
+                                </p>
+
+                                <p className="mt-2 font-semibold text-slate-800">
+                                    {assigningTask?.title}
+                                </p>
+
+                            </div>
 
 
-                        <select
-                            value={selectedEmployee}
-                            onChange={(e) =>
-                                setSelectedEmployee(e.target.value)
-                            }
-                            className="w-full border p-3 rounded-lg mb-5"
-                        >
-
-                            <option value="">
+                            <label className="mb-2 block text-sm font-semibold text-slate-700">
                                 Select Employee
-                            </option>
+                            </label>
 
 
-                            {employees.map((employee) => (
+                            <select
+                                value={selectedEmployee}
+                                onChange={(e) =>
+                                    setSelectedEmployee(e.target.value)
+                                }
+                                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                            >
 
-                                <option
-                                    key={employee.id}
-                                    value={employee.id}
-                                >
-
-                                    {employee.firstName}{" "}
-                                    {employee.lastName}
-
-                                    {" - "}
-
-                                    {employee.employeeCode}
-
+                                <option value="">
+                                    Select Employee
                                 </option>
 
-                            ))}
 
-                        </select>
+                                {employees.map((employee) => (
+
+                                    <option
+                                        key={employee.id}
+                                        value={employee.id}
+                                    >
+
+                                        {employee.firstName}{" "}
+                                        {employee.lastName}
+
+                                        {" - "}
+
+                                        {employee.employeeCode}
+
+                                    </option>
+
+                                ))}
+
+                            </select>
 
 
-                        <div className="flex gap-3">
+                            <div className="mt-7 flex gap-3">
 
-                            <button
-                                onClick={assignEmployee}
-                                className="bg-blue-600 text-white px-5 py-2 rounded-lg"
-                            >
-                                Assign
-                            </button>
+                                <button
+                                    onClick={assignEmployee}
+                                    className="flex-1 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700"
+                                >
+                                    Assign Employee
+                                </button>
 
 
-                            <button
-                                onClick={() => {
+                                <button
+                                    onClick={() => {
 
-                                    setShowAssign(false);
-                                    setAssigningTask(null);
+                                        setShowAssign(false);
+                                        setAssigningTask(null);
+                                        setSelectedEmployee("");
 
-                                }}
-                                className="bg-gray-500 text-white px-5 py-2 rounded-lg"
-                            >
-                                Cancel
-                            </button>
+                                    }}
+                                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                                >
+                                    Cancel
+                                </button>
+
+                            </div>
 
                         </div>
 

@@ -9,21 +9,36 @@ const ManagerLayout = () => {
 
         <div className="flex min-h-screen bg-slate-100">
 
+            {/* SIDEBAR */}
+
             <ManagerSidebar />
 
-            <div className="flex-1">
+
+            {/* MAIN AREA */}
+
+            <div className="flex-1 min-w-0 flex flex-col">
+
+                {/* NAVBAR */}
 
                 <ManagerNavbar />
 
-                <main className="p-6">
 
-                    <Outlet />
+                {/* PAGE CONTENT */}
+
+                <main className="flex-1 p-4 sm:p-6 lg:p-8">
+
+                    <div className="max-w-[1600px] mx-auto w-full">
+
+                        <Outlet />
+
+                    </div>
 
                 </main>
 
             </div>
 
         </div>
+
     );
 };
 

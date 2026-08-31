@@ -19,7 +19,7 @@ function EmployeeLeaveRequests() {
 
 
     // =========================================
-    // LOAD EMPLOYEE DASHBOARD
+    // LOAD EMPLOYEE
     // =========================================
 
     const getEmployee = async () => {
@@ -164,65 +164,100 @@ function EmployeeLeaveRequests() {
 
         if (status === "APPROVED") {
 
-            return "bg-green-100 text-green-700";
+            return "bg-emerald-50 text-emerald-700 border border-emerald-200";
 
         }
 
         if (status === "REJECTED") {
 
-            return "bg-red-100 text-red-700";
+            return "bg-red-50 text-red-700 border border-red-200";
 
         }
 
-        return "bg-yellow-100 text-yellow-700";
+        return "bg-amber-50 text-amber-700 border border-amber-200";
     };
 
 
     return (
 
-        <div className="p-6">
+        <div className="space-y-8">
+
 
             {/* =========================================
                 HEADER
             ========================================= */}
 
-            <div className="mb-8">
+            <div>
 
-                <h1 className="text-3xl font-bold text-gray-800">
+                <p className="text-indigo-600 font-semibold text-sm">
+                    Employee Workspace
+                </p>
+
+                <h1 className="text-4xl font-bold text-slate-900 mt-1 tracking-tight">
                     Leave Requests
                 </h1>
 
-                <p className="text-gray-500 mt-1">
-                    Apply for leave and track your requests.
+                <p className="text-slate-500 mt-2 text-lg">
+                    Apply for time off and track the status of your requests.
                 </p>
 
             </div>
 
 
             {/* =========================================
-                APPLY LEAVE
+                APPLY LEAVE CARD
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
-                <h2 className="text-xl font-semibold text-gray-800 mb-5">
-                    Apply for Leave
-                </h2>
 
+                {/* CARD HEADER */}
+
+                <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-4">
+
+                    <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center text-xl">
+
+                        🏖️
+
+                    </div>
+
+
+                    <div>
+
+                        <h2 className="text-xl font-bold text-slate-900">
+                            Apply for Leave
+                        </h2>
+
+                        <p className="text-sm text-slate-500 mt-1">
+                            Submit your leave request for manager approval.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {/* FORM */}
 
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-5"
+                    className="p-6 space-y-6"
                 >
+
 
                     {/* DATE ROW */}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+                        {/* START DATE */}
 
                         <div>
 
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+
                                 Start Date
+
                             </label>
 
                             <input
@@ -231,16 +266,20 @@ function EmployeeLeaveRequests() {
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 required
-                                className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                             />
 
                         </div>
 
 
+                        {/* END DATE */}
+
                         <div>
 
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+
                                 End Date
+
                             </label>
 
                             <input
@@ -249,7 +288,7 @@ function EmployeeLeaveRequests() {
                                 value={formData.endDate}
                                 onChange={handleChange}
                                 required
-                                className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                             />
 
                         </div>
@@ -261,18 +300,20 @@ function EmployeeLeaveRequests() {
 
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Reason
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+
+                            Reason for Leave
+
                         </label>
 
                         <textarea
                             name="reason"
                             value={formData.reason}
                             onChange={handleChange}
-                            placeholder="Enter reason for leave"
+                            placeholder="Briefly explain the reason for your leave request..."
                             required
-                            rows="4"
-                            className="w-full border rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows="5"
+                            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-700 resize-none outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                         />
 
                     </div>
@@ -280,21 +321,25 @@ function EmployeeLeaveRequests() {
 
                     {/* SUBMIT */}
 
-                    <button
-                        type="submit"
-                        disabled={submitting}
-                        className={`px-6 py-3 rounded-lg text-white font-medium ${
-                            submitting
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700"
-                        }`}
-                    >
+                    <div className="flex justify-end pt-2">
 
-                        {submitting
-                            ? "Submitting..."
-                            : "Apply Leave"}
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className={`px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 ${
+                                submitting
+                                    ? "bg-slate-400 cursor-not-allowed"
+                                    : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 active:scale-[0.98]"
+                            }`}
+                        >
 
-                    </button>
+                            {submitting
+                                ? "Submitting..."
+                                : "Submit Leave Request"}
+
+                        </button>
+
+                    </div>
 
                 </form>
 
@@ -305,27 +350,48 @@ function EmployeeLeaveRequests() {
                 LEAVE HISTORY
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow-sm border p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
-                <div className="flex justify-between items-center mb-5">
 
-                    <div>
+                {/* HISTORY HEADER */}
 
-                        <h2 className="text-xl font-semibold text-gray-800">
-                            My Leave History
-                        </h2>
+                <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-                        <p className="text-sm text-gray-500">
-                            Track your previous leave requests.
-                        </p>
+                    <div className="flex items-center gap-4">
+
+                        <div className="w-11 h-11 rounded-xl bg-violet-100 flex items-center justify-center text-xl">
+
+                            📋
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 className="text-xl font-bold text-slate-900">
+
+                                My Leave History
+
+                            </h2>
+
+                            <p className="text-sm text-slate-500 mt-1">
+
+                                Track all your previous and current leave requests.
+
+                            </p>
+
+                        </div>
 
                     </div>
 
+
                     <button
                         onClick={fetchLeaves}
-                        className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+                        className="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
                     >
-                        Refresh
+
+                        ↻ Refresh
+
                     </button>
 
                 </div>
@@ -335,8 +401,10 @@ function EmployeeLeaveRequests() {
 
                 {error && (
 
-                    <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-5">
+                    <div className="m-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+
                         {error}
+
                     </div>
 
                 )}
@@ -346,43 +414,73 @@ function EmployeeLeaveRequests() {
 
                 {loading ? (
 
-                    <div className="text-center py-10 text-gray-500">
-                        Loading leave requests...
+                    <div className="py-16 text-center">
+
+                        <div className="text-3xl mb-3 animate-pulse">
+                            📋
+                        </div>
+
+                        <p className="text-slate-500">
+                            Loading your leave requests...
+                        </p>
+
                     </div>
 
                 ) : leaves.length === 0 ? (
 
-                    <div className="text-center py-10 text-gray-500">
-                        No leave requests found.
+                    <div className="py-16 text-center">
+
+                        <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl mb-4">
+
+                            🏖️
+
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-slate-800">
+
+                            No leave requests yet
+
+                        </h3>
+
+                        <p className="text-slate-500 mt-2">
+
+                            Your submitted leave requests will appear here.
+
+                        </p>
+
                     </div>
 
                 ) : (
 
                     <div className="overflow-x-auto">
 
+
                         <table className="w-full">
 
-                            <thead>
 
-                            <tr className="border-b text-left">
+                            {/* TABLE HEADER */}
 
-                                <th className="py-3 px-4 text-sm font-semibold text-gray-600">
+                            <thead className="bg-slate-50">
+
+                            <tr>
+
+                                <th className="py-4 px-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     #
                                 </th>
 
-                                <th className="py-3 px-4 text-sm font-semibold text-gray-600">
+                                <th className="py-4 px-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Start Date
                                 </th>
 
-                                <th className="py-3 px-4 text-sm font-semibold text-gray-600">
+                                <th className="py-4 px-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     End Date
                                 </th>
 
-                                <th className="py-3 px-4 text-sm font-semibold text-gray-600">
+                                <th className="py-4 px-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Reason
                                 </th>
 
-                                <th className="py-3 px-4 text-sm font-semibold text-gray-600">
+                                <th className="py-4 px-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     Status
                                 </th>
 
@@ -391,39 +489,75 @@ function EmployeeLeaveRequests() {
                             </thead>
 
 
-                            <tbody>
+                            {/* TABLE BODY */}
+
+                            <tbody className="divide-y divide-slate-100">
 
                             {leaves.map((leave, index) => (
 
                                 <tr
                                     key={leave.leaveId}
-                                    className="border-b last:border-b-0 hover:bg-gray-50"
+                                    className="hover:bg-slate-50 transition-colors"
                                 >
 
-                                    <td className="py-4 px-4 text-gray-700">
-                                        {index + 1}
+                                    <td className="py-5 px-6 text-sm font-medium text-slate-500">
+
+                                        {String(index + 1).padStart(2, "0")}
+
                                     </td>
 
-                                    <td className="py-4 px-4 text-gray-700">
-                                        {leave.startDate}
+
+                                    <td className="py-5 px-6">
+
+                                        <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+
+                                            <span>
+                                                📅
+                                            </span>
+
+                                            {leave.startDate}
+
+                                        </div>
+
                                     </td>
 
-                                    <td className="py-4 px-4 text-gray-700">
-                                        {leave.endDate}
+
+                                    <td className="py-5 px-6">
+
+                                        <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+
+                                            <span>
+                                                📅
+                                            </span>
+
+                                            {leave.endDate}
+
+                                        </div>
+
                                     </td>
 
-                                    <td className="py-4 px-4 text-gray-700 max-w-xs">
-                                        {leave.reason}
+
+                                    <td className="py-5 px-6 max-w-xs">
+
+                                        <p className="text-sm text-slate-600 truncate">
+
+                                            {leave.reason}
+
+                                        </p>
+
                                     </td>
 
-                                    <td className="py-4 px-4">
+
+                                    <td className="py-5 px-6">
 
                                         <span
-                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
+                                            className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusStyle(
                                                 leave.status
                                             )}`}
                                         >
+
                                             {leave.status}
+
                                         </span>
 
                                     </td>

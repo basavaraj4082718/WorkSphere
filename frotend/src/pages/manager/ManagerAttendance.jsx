@@ -210,11 +210,31 @@ const ManagerAttendance = () => {
 
         return (
 
-            <div className="flex justify-center items-center h-64">
+            <div className="flex min-h-[600px] items-center justify-center">
 
-                <p className="text-gray-500 text-lg">
-                    Loading attendance...
-                </p>
+                <div className="text-center">
+
+                    <div className="relative mx-auto h-14 w-14">
+
+                        <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+
+                        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+
+                    </div>
+
+                    <h3 className="mt-6 text-lg font-semibold text-slate-800">
+
+                        Loading Attendance
+
+                    </h3>
+
+                    <p className="mt-2 text-sm text-slate-500">
+
+                        Fetching your team's attendance records...
+
+                    </p>
+
+                </div>
 
             </div>
 
@@ -225,32 +245,115 @@ const ManagerAttendance = () => {
 
     return (
 
-        <div className="space-y-6">
+        <div className="space-y-8">
 
 
             {/* =========================================
-                HEADER
+                HERO HEADER
             ========================================= */}
 
-            <div>
+            <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-8 md:px-10 md:py-10">
 
-                <p className="text-blue-600 font-medium">
-                    Attendance
-                </p>
+                {/* Background Effects */}
 
-                <h1 className="text-3xl font-bold mt-1">
+                <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl"></div>
 
-                    {manager?.managerName
-                        ? `${manager.managerName}'s Team`
-                        : "Team Attendance"}
+                <div className="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-violet-500/10 blur-3xl"></div>
 
-                </h1>
 
-                <p className="text-gray-500 mt-2">
+                <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-                    Monitor today's attendance of your team.
 
-                </p>
+                    {/* LEFT */}
+
+                    <div>
+
+                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-1.5">
+
+                            <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+
+                            <span className="text-xs font-medium text-indigo-300">
+
+                                Live Team Overview
+
+                            </span>
+
+                        </div>
+
+
+                        <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+
+                            {manager?.managerName
+                                ? `${manager.managerName}'s Team`
+                                : "Team Attendance"}
+
+                        </h1>
+
+
+                        <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400 md:text-base">
+
+                            Monitor today's attendance, track team availability,
+                            and stay updated on your workforce activity.
+
+                        </p>
+
+                    </div>
+
+
+                    {/* RIGHT */}
+
+                    <div className="flex items-center gap-3">
+
+                        <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
+
+                            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+
+                                Team Size
+
+                            </p>
+
+                            <p className="mt-1 text-3xl font-bold text-white">
+
+                                {employees.length}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {/* =========================================
+                SECTION HEADER
+            ========================================= */}
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+
+                <div>
+
+                    <p className="text-sm font-semibold text-indigo-600">
+
+                        Attendance Overview
+
+                    </p>
+
+                    <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+
+                        Today's workforce status
+
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-500">
+
+                        A real-time snapshot of your team's availability.
+
+                    </p>
+
+                </div>
 
             </div>
 
@@ -259,29 +362,51 @@ const ManagerAttendance = () => {
                 STATISTICS
             ========================================= */}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+            <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
 
-                {/* Team */}
+                {/* TEAM SIZE */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl hover:shadow-slate-200/60">
 
-                    <div className="flex justify-between items-center">
+                    <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-indigo-50 transition group-hover:scale-125"></div>
 
-                        <div>
+                    <div className="relative">
 
-                            <p className="text-gray-500">
-                                Team Size
-                            </p>
+                        <div className="flex items-start justify-between">
 
-                            <p className="text-3xl font-bold mt-2">
-                                {employees.length}
-                            </p>
+                            <div>
+
+                                <p className="text-sm font-medium text-slate-500">
+
+                                    Team Size
+
+                                </p>
+
+                                <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+
+                                    {employees.length}
+
+                                </h3>
+
+                            </div>
+
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-xl">
+
+                                👥
+
+                            </div>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">
-                            👥
+                        <div className="mt-6 border-t border-slate-100 pt-4">
+
+                            <p className="text-xs text-slate-400">
+
+                                Employees assigned to your team
+
+                            </p>
+
                         </div>
 
                     </div>
@@ -289,26 +414,48 @@ const ManagerAttendance = () => {
                 </div>
 
 
-                {/* Present */}
+                {/* PRESENT */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100">
 
-                    <div className="flex justify-between items-center">
+                    <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-emerald-50 transition group-hover:scale-125"></div>
 
-                        <div>
+                    <div className="relative">
 
-                            <p className="text-gray-500">
-                                Present
-                            </p>
+                        <div className="flex items-start justify-between">
 
-                            <p className="text-3xl font-bold mt-2 text-green-600">
-                                {presentCount}
-                            </p>
+                            <div>
+
+                                <p className="text-sm font-medium text-slate-500">
+
+                                    Present
+
+                                </p>
+
+                                <h3 className="mt-3 text-3xl font-bold tracking-tight text-emerald-600">
+
+                                    {presentCount}
+
+                                </h3>
+
+                            </div>
+
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-xl">
+
+                                ✓
+
+                            </div>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl">
-                            ✅
+                        <div className="mt-6 border-t border-slate-100 pt-4">
+
+                            <p className="text-xs text-slate-400">
+
+                                Employees currently present
+
+                            </p>
+
                         </div>
 
                     </div>
@@ -316,128 +463,237 @@ const ManagerAttendance = () => {
                 </div>
 
 
-                {/* Half Day */}
+                {/* HALF DAY */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100">
 
-                    <div className="flex justify-between items-center">
+                    <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-amber-50 transition group-hover:scale-125"></div>
 
-                        <div>
+                    <div className="relative">
 
-                            <p className="text-gray-500">
-                                Half Day
-                            </p>
+                        <div className="flex items-start justify-between">
 
-                            <p className="text-3xl font-bold mt-2 text-yellow-600">
-                                {halfDayCount}
-                            </p>
+                            <div>
 
-                        </div>
+                                <p className="text-sm font-medium text-slate-500">
 
-                        <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-2xl">
-                            🌓
-                        </div>
+                                    Half Day
 
-                    </div>
+                                </p>
 
-                </div>
+                                <h3 className="mt-3 text-3xl font-bold tracking-tight text-amber-600">
 
+                                    {halfDayCount}
 
-                {/* Absent */}
+                                </h3>
 
-                <div className="bg-white rounded-xl shadow p-5">
+                            </div>
 
-                    <div className="flex justify-between items-center">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-xl">
 
-                        <div>
+                                ◐
 
-                            <p className="text-gray-500">
-                                Not Marked
-                            </p>
-
-                            <p className="text-3xl font-bold mt-2 text-red-600">
-                                {absentCount}
-                            </p>
+                            </div>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-2xl">
-                            ❌
+                        <div className="mt-6 border-t border-slate-100 pt-4">
+
+                            <p className="text-xs text-slate-400">
+
+                                Employees on half-day attendance
+
+                            </p>
+
                         </div>
 
                     </div>
 
                 </div>
 
-            </div>
+
+                {/* NOT MARKED */}
+
+                <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-200 hover:shadow-xl hover:shadow-rose-100">
+
+                    <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-rose-50 transition group-hover:scale-125"></div>
+
+                    <div className="relative">
+
+                        <div className="flex items-start justify-between">
+
+                            <div>
+
+                                <p className="text-sm font-medium text-slate-500">
+
+                                    Not Marked
+
+                                </p>
+
+                                <h3 className="mt-3 text-3xl font-bold tracking-tight text-rose-600">
+
+                                    {absentCount}
+
+                                </h3>
+
+                            </div>
+
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-xl">
+
+                                !
+
+                            </div>
+
+                        </div>
+
+                        <div className="mt-6 border-t border-slate-100 pt-4">
+
+                            <p className="text-xs text-slate-400">
+
+                                Attendance not recorded today
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
 
             {/* =========================================
                 SEARCH + REFRESH
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow p-4">
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
 
-                <div className="flex flex-col md:flex-row gap-3">
+                <div className="flex flex-col gap-3 md:flex-row">
 
-                    <input
-                        type="text"
-                        placeholder="Search employees..."
-                        value={search}
-                        onChange={(e) =>
-                            setSearch(e.target.value)
-                        }
-                        className="flex-1 border border-gray-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="relative flex-1">
+
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+
+                            ⌕
+
+                        </span>
+
+                        <input
+                            type="text"
+                            placeholder="Search by employee name, code or department..."
+                            value={search}
+                            onChange={(e) =>
+                                setSearch(e.target.value)
+                            }
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+                        />
+
+                    </div>
+
 
                     <button
                         onClick={fetchAttendance}
-                        className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
+                        className="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-200"
                     >
+
+                        <span>
+
+                            ↻
+
+                        </span>
+
                         Refresh
+
                     </button>
 
                 </div>
 
-            </div>
+            </section>
 
 
             {/* =========================================
                 ATTENDANCE TABLE
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow overflow-hidden">
+            <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+
+
+                {/* TABLE HEADER */}
+
+                <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div>
+
+                        <h2 className="font-bold text-slate-900">
+
+                            Team Attendance
+
+                        </h2>
+
+                        <p className="mt-1 text-sm text-slate-500">
+
+                            Detailed attendance records for today.
+
+                        </p>
+
+                    </div>
+
+
+                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2 text-xs font-medium text-slate-500">
+
+                        <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+
+                        {filteredEmployees.length} employees
+
+                    </div>
+
+                </div>
+
 
                 <div className="overflow-x-auto">
 
-                    <table className="w-full">
+                    <table className="w-full min-w-[900px]">
 
-                        <thead className="bg-gray-100">
+
+                        <thead className="border-b border-slate-100 bg-slate-50">
 
                         <tr>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Employee
+
                             </th>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Department
+
                             </th>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Date
+
                             </th>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Check In
+
                             </th>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Check Out
+
                             </th>
 
-                            <th className="text-left p-4">
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Status
+
                             </th>
 
                         </tr>
@@ -445,7 +701,7 @@ const ManagerAttendance = () => {
                         </thead>
 
 
-                        <tbody>
+                        <tbody className="divide-y divide-slate-100">
 
                         {filteredEmployees.map(
                             (employee) => {
@@ -460,17 +716,17 @@ const ManagerAttendance = () => {
 
                                     <tr
                                         key={employee.id}
-                                        className="border-t hover:bg-gray-50"
+                                        className="group transition hover:bg-slate-50/80"
                                     >
 
 
-                                        {/* Employee */}
+                                        {/* EMPLOYEE */}
 
-                                        <td className="p-4">
+                                        <td className="px-6 py-5">
 
                                             <div className="flex items-center gap-3">
 
-                                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 font-bold text-indigo-600">
 
                                                     {employee.firstName
                                                         ?.charAt(0)
@@ -478,9 +734,10 @@ const ManagerAttendance = () => {
 
                                                 </div>
 
+
                                                 <div>
 
-                                                    <p className="font-semibold">
+                                                    <p className="font-semibold text-slate-900">
 
                                                         {
                                                             employee.firstName
@@ -492,7 +749,7 @@ const ManagerAttendance = () => {
 
                                                     </p>
 
-                                                    <p className="text-xs text-gray-500">
+                                                    <p className="mt-1 text-xs text-slate-400">
 
                                                         {
                                                             employee.employeeCode
@@ -507,18 +764,22 @@ const ManagerAttendance = () => {
                                         </td>
 
 
-                                        {/* Department */}
+                                        {/* DEPARTMENT */}
 
-                                        <td className="p-4">
+                                        <td className="px-6 py-5">
 
-                                            {employee.department}
+                                            <span className="inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
+
+                                                {employee.department}
+
+                                            </span>
 
                                         </td>
 
 
-                                        {/* Date */}
+                                        {/* DATE */}
 
-                                        <td className="p-4 text-gray-600">
+                                        <td className="px-6 py-5 text-sm text-slate-600">
 
                                             {record?.attendanceDate ||
                                                 new Date()
@@ -528,42 +789,72 @@ const ManagerAttendance = () => {
                                         </td>
 
 
-                                        {/* Check In */}
+                                        {/* CHECK IN */}
 
-                                        <td className="p-4">
+                                        <td className="px-6 py-5">
 
-                                            {record
-                                                ? formatTime(
-                                                    record.checkInTime
-                                                )
-                                                : "--"}
+                                            {record ? (
+
+                                                <span className="text-sm font-medium text-slate-700">
+
+                                                    {formatTime(
+                                                        record.checkInTime
+                                                    )}
+
+                                                </span>
+
+                                            ) : (
+
+                                                <span className="text-sm text-slate-400">
+
+                                                    --
+
+                                                </span>
+
+                                            )}
 
                                         </td>
 
 
-                                        {/* Check Out */}
+                                        {/* CHECK OUT */}
 
-                                        <td className="p-4">
+                                        <td className="px-6 py-5">
 
-                                            {record
-                                                ? formatTime(
-                                                    record.checkOutTime
-                                                )
-                                                : "--"}
+                                            {record ? (
+
+                                                <span className="text-sm font-medium text-slate-700">
+
+                                                    {formatTime(
+                                                        record.checkOutTime
+                                                    )}
+
+                                                </span>
+
+                                            ) : (
+
+                                                <span className="text-sm text-slate-400">
+
+                                                    --
+
+                                                </span>
+
+                                            )}
 
                                         </td>
 
 
-                                        {/* Status */}
+                                        {/* STATUS */}
 
-                                        <td className="p-4">
+                                        <td className="px-6 py-5">
 
                                             {record ? (
 
                                                 record.status ===
                                                 "PRESENT" ? (
 
-                                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
 
                                                         Present
 
@@ -572,7 +863,9 @@ const ManagerAttendance = () => {
                                                 ) : record.status ===
                                                 "HALF_DAY" ? (
 
-                                                    <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                    <span className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">
+
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
 
                                                         Half Day
 
@@ -580,7 +873,9 @@ const ManagerAttendance = () => {
 
                                                 ) : (
 
-                                                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                    <span className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 ring-1 ring-inset ring-rose-200">
+
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
 
                                                         Absent
 
@@ -590,7 +885,9 @@ const ManagerAttendance = () => {
 
                                             ) : (
 
-                                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
+                                                <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 ring-1 ring-inset ring-slate-200">
+
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
 
                                                     Not Marked
 
@@ -621,20 +918,24 @@ const ManagerAttendance = () => {
 
                 {filteredEmployees.length === 0 && (
 
-                    <div className="text-center py-12">
+                    <div className="px-6 py-16 text-center">
 
-                        <div className="text-5xl mb-3">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-3xl">
+
                             👥
+
                         </div>
 
-                        <h2 className="text-xl font-semibold">
+                        <h2 className="mt-5 text-xl font-bold text-slate-900">
+
                             No employees found
+
                         </h2>
 
-                        <p className="text-gray-500 mt-1">
+                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
 
                             {search
-                                ? "No employees match your search."
+                                ? "No employees match your current search. Try using a different keyword."
                                 : "You currently have no employees assigned to your team."
                             }
 
@@ -644,7 +945,70 @@ const ManagerAttendance = () => {
 
                 )}
 
-            </div>
+            </section>
+
+
+            {/* =========================================
+                TEAM INSIGHT
+            ========================================= */}
+
+            <section className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-r from-indigo-50 via-white to-violet-50 p-6 md:p-8">
+
+                <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-indigo-200/30 blur-3xl"></div>
+
+
+                <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+
+
+                    <div className="flex items-start gap-4">
+
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-2xl text-white shadow-lg shadow-indigo-200">
+
+                            ✦
+
+                        </div>
+
+
+                        <div>
+
+                            <p className="text-sm font-semibold text-indigo-600">
+
+                                TEAM INSIGHT
+
+                            </p>
+
+                            <h2 className="mt-1 text-xl font-bold text-slate-900">
+
+                                Stay connected with your workforce
+
+                            </h2>
+
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+
+                                Track attendance patterns and team availability
+                                to maintain better visibility into your workforce
+                                and daily operations.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div className="shrink-0">
+
+                        <span className="inline-flex rounded-full border border-indigo-200 bg-white px-4 py-2 text-xs font-semibold text-indigo-600 shadow-sm">
+
+                            WorkSphere Insight
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
 
         </div>
 

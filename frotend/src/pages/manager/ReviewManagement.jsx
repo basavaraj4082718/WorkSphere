@@ -11,6 +11,8 @@ const ReviewManagement = () => {
 
         try {
 
+            setLoading(true);
+
             const token = localStorage.getItem("token");
 
             const response = await axios.get(
@@ -119,19 +121,46 @@ const ReviewManagement = () => {
 
 
     // =========================================
+    // STATISTICS
+    // =========================================
+
+    const averageRating =
+        reviews.length > 0
+            ? (
+                reviews.reduce(
+                    (sum, review) =>
+                        sum + Number(review.rating || 0),
+                    0
+                ) / reviews.length
+            ).toFixed(1)
+            : "0.0";
+
+
+    const fiveStarReviews =
+        reviews.filter(
+            (review) =>
+                Number(review.rating) === 5
+        ).length;
+
+
+    // =========================================
     // LOADING
     // =========================================
 
     if (loading) {
 
         return (
-            <div className="flex justify-center items-center h-64">
 
-                <p className="text-gray-500 text-lg">
+            <div className="flex flex-col justify-center items-center min-h-[400px]">
+
+                <div className="w-10 h-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
+
+                <p className="text-slate-500 mt-4 font-medium">
                     Loading reviews...
                 </p>
 
             </div>
+
         );
 
     }
@@ -139,26 +168,53 @@ const ReviewManagement = () => {
 
     return (
 
-        <div className="space-y-6">
+        <div className="space-y-8">
 
 
             {/* =========================================
                 HEADER
             ========================================= */}
 
-            <div>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
 
-                <p className="text-blue-600 font-medium">
-                    Performance
-                </p>
+                <div>
 
-                <h1 className="text-3xl font-bold mt-1">
-                    Reviews
-                </h1>
+                    <div className="flex items-center gap-2">
 
-                <p className="text-gray-500 mt-2">
-                    View and manage employee performance reviews.
-                </p>
+                        <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+
+                        <p className="text-indigo-600 font-semibold text-sm">
+                            Performance Management
+                        </p>
+
+                    </div>
+
+
+                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2 tracking-tight">
+
+                        Reviews
+
+                    </h1>
+
+
+                    <p className="text-slate-500 mt-2">
+
+                        View and manage employee performance reviews across the organization.
+
+                    </p>
+
+                </div>
+
+
+                <div className="text-sm text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+
+                    <span className="font-semibold text-slate-800">
+                        {reviews.length}
+                    </span>
+
+                    {" "}total reviews
+
+                </div>
 
             </div>
 
@@ -172,24 +228,33 @@ const ReviewManagement = () => {
 
                 {/* Total Reviews */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
 
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-start">
 
                         <div>
 
-                            <p className="text-gray-500">
+                            <p className="text-sm font-medium text-slate-500">
                                 Total Reviews
                             </p>
 
-                            <p className="text-3xl font-bold mt-2">
+                            <p className="text-3xl font-bold text-slate-900 mt-3">
+
                                 {reviews.length}
+
+                            </p>
+
+                            <p className="text-xs text-slate-400 mt-2">
+                                All performance evaluations
                             </p>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">
+
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-xl">
+
                             ⭐
+
                         </div>
 
                     </div>
@@ -199,39 +264,44 @@ const ReviewManagement = () => {
 
                 {/* Average Rating */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
 
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-start">
 
                         <div>
 
-                            <p className="text-gray-500">
+                            <p className="text-sm font-medium text-slate-500">
                                 Average Rating
                             </p>
 
-                            <p className="text-3xl font-bold mt-2">
+                            <div className="flex items-end gap-1 mt-3">
 
-                                {reviews.length > 0
-                                    ? (
-                                        reviews.reduce(
-                                            (sum, review) =>
-                                                sum + review.rating,
-                                            0
-                                        ) / reviews.length
-                                    ).toFixed(1)
-                                    : "0.0"
-                                }
+                                <p className="text-3xl font-bold text-slate-900">
 
-                                <span className="text-lg text-gray-400 ml-1">
+                                    {averageRating}
+
+                                </p>
+
+                                <span className="text-sm text-slate-400 mb-1">
                                     / 5
                                 </span>
 
-                            </p>
+                            </div>
+
+
+                            <div className="flex text-yellow-400 text-sm mt-2">
+
+                                ★★★★★
+
+                            </div>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-2xl">
+
+                        <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-xl">
+
                             ⭐
+
                         </div>
 
                     </div>
@@ -241,31 +311,33 @@ const ReviewManagement = () => {
 
                 {/* Five Star Reviews */}
 
-                <div className="bg-white rounded-xl shadow p-5">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
 
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-start">
 
                         <div>
 
-                            <p className="text-gray-500">
-                                5 Star Reviews
+                            <p className="text-sm font-medium text-slate-500">
+                                Excellent Reviews
                             </p>
 
-                            <p className="text-3xl font-bold mt-2 text-green-600">
+                            <p className="text-3xl font-bold text-slate-900 mt-3">
 
-                                {
-                                    reviews.filter(
-                                        (review) =>
-                                            review.rating === 5
-                                    ).length
-                                }
+                                {fiveStarReviews}
 
+                            </p>
+
+                            <p className="text-xs text-slate-400 mt-2">
+                                Employees rated 5 stars
                             </p>
 
                         </div>
 
-                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl">
+
+                        <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">
+
                             🏆
+
                         </div>
 
                     </div>
@@ -279,57 +351,125 @@ const ReviewManagement = () => {
                 SEARCH
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow p-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
 
-                <input
-                    type="text"
-                    placeholder="Search by employee, manager, rating or comments..."
-                    value={search}
-                    onChange={(e) =>
-                        setSearch(e.target.value)
-                    }
-                    className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="relative">
+
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+
+                        🔍
+
+                    </span>
+
+
+                    <input
+                        type="text"
+                        placeholder="Search by employee, manager, rating or comments..."
+                        value={search}
+                        onChange={(e) =>
+                            setSearch(e.target.value)
+                        }
+                        className="w-full border border-slate-200 bg-slate-50 rounded-xl py-3 pl-11 pr-4 outline-none text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 transition-all"
+                    />
+
+                </div>
 
             </div>
 
 
             {/* =========================================
-                REVIEWS
+                REVIEWS TABLE
             ========================================= */}
 
-            <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+
+
+                {/* TABLE HEADER */}
+
+                <div className="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                    <div>
+
+                        <h2 className="text-lg font-bold text-slate-900">
+
+                            Performance Reviews
+
+                        </h2>
+
+                        <p className="text-sm text-slate-500 mt-1">
+
+                            Detailed employee performance feedback.
+
+                        </p>
+
+                    </div>
+
+
+                    <div className="text-sm text-slate-500">
+
+                        Showing
+
+                        <span className="font-semibold text-slate-800 mx-1">
+
+                            {filteredReviews.length}
+
+                        </span>
+
+                        results
+
+                    </div>
+
+                </div>
+
 
                 <div className="overflow-x-auto">
 
-                    <table className="w-full">
+                    <table className="w-full min-w-[950px]">
 
-                        <thead className="bg-gray-100">
+
+                        <thead className="bg-slate-50 border-b border-slate-200">
 
                         <tr>
 
-                            <th className="text-left p-4">
+                            <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Employee
+
                             </th>
 
-                            <th className="text-left p-4">
+
+                            <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Manager
+
                             </th>
 
-                            <th className="text-left p-4">
+
+                            <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Rating
+
                             </th>
 
-                            <th className="text-left p-4">
+
+                            <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Comments
+
                             </th>
 
-                            <th className="text-left p-4">
+
+                            <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Date
+
                             </th>
 
-                            <th className="text-left p-4">
+
+                            <th className="text-right px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+
                                 Action
+
                             </th>
 
                         </tr>
@@ -337,38 +477,45 @@ const ReviewManagement = () => {
                         </thead>
 
 
-                        <tbody>
+                        <tbody className="divide-y divide-slate-100">
 
                         {filteredReviews.map((review) => (
 
                             <tr
                                 key={review.id}
-                                className="border-t hover:bg-gray-50"
+                                className="hover:bg-slate-50/80 transition-colors"
                             >
 
 
-                                {/* Employee */}
+                                {/* EMPLOYEE */}
 
-                                <td className="p-4">
+                                <td className="px-6 py-4">
 
                                     <div className="flex items-center gap-3">
 
-                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
 
                                             {review.employeeName
-                                                ?.charAt(0)
-                                                .toUpperCase()}
+                                                    ?.charAt(0)
+                                                    .toUpperCase() ||
+                                                "E"}
 
                                         </div>
+
 
                                         <div>
 
-                                            <p className="font-semibold">
-                                                {review.employeeName}
+                                            <p className="font-semibold text-sm text-slate-800">
+
+                                                {review.employeeName || "Unknown Employee"}
+
                                             </p>
 
-                                            <p className="text-xs text-gray-500">
-                                                ID: {review.employeeId}
+
+                                            <p className="text-xs text-slate-400 mt-0.5">
+
+                                                Employee ID: {review.employeeId}
+
                                             </p>
 
                                         </div>
@@ -378,73 +525,115 @@ const ReviewManagement = () => {
                                 </td>
 
 
-                                {/* Manager */}
+                                {/* MANAGER */}
 
-                                <td className="p-4">
+                                <td className="px-6 py-4">
 
-                                    <p className="font-medium">
-                                        {review.managerName}
-                                    </p>
+                                    <div>
 
-                                    <p className="text-xs text-gray-500">
-                                        ID: {review.managerId}
-                                    </p>
+                                        <p className="font-medium text-sm text-slate-700">
 
-                                </td>
+                                            {review.managerName || "Admin"}
+
+                                        </p>
 
 
-                                {/* Rating */}
+                                        <p className="text-xs text-slate-400 mt-0.5">
 
-                                <td className="p-4">
+                                            Manager ID: {review.managerId}
 
-                                    <div className="flex items-center gap-2">
-
-                                        <span className="text-yellow-500 text-lg">
-                                            {"★".repeat(review.rating)}
-                                        </span>
-
-                                        <span className="text-gray-500">
-                                            {review.rating}/5
-                                        </span>
+                                        </p>
 
                                     </div>
 
                                 </td>
 
 
-                                {/* Comments */}
+                                {/* RATING */}
 
-                                <td className="p-4 max-w-md">
+                                <td className="px-6 py-4">
 
-                                    <p className="text-gray-600 truncate">
+                                    <div className="flex items-center gap-2">
+
+                                        <div className="flex text-amber-400 text-sm">
+
+                                            {[1, 2, 3, 4, 5].map(
+                                                (star) => (
+
+                                                    <span
+                                                        key={star}
+                                                        className={
+                                                            star <= Number(review.rating)
+                                                                ? "text-amber-400"
+                                                                : "text-slate-200"
+                                                        }
+                                                    >
+                                                            ★
+                                                        </span>
+
+                                                )
+                                            )}
+
+                                        </div>
+
+
+                                        <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">
+
+                                                {review.rating}/5
+
+                                            </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                {/* COMMENTS */}
+
+                                <td className="px-6 py-4 max-w-sm">
+
+                                    <p
+                                        className="text-sm text-slate-600 truncate"
+                                        title={review.comments}
+                                    >
+
                                         {review.comments}
+
                                     </p>
 
                                 </td>
 
 
-                                {/* Date */}
+                                {/* DATE */}
 
-                                <td className="p-4 text-gray-600">
+                                <td className="px-6 py-4">
 
-                                    {review.reviewDate}
+                                        <span className="text-sm text-slate-500">
+
+                                            {review.reviewDate}
+
+                                        </span>
 
                                 </td>
 
 
-                                {/* Delete */}
+                                {/* DELETE */}
 
-                                <td className="p-4">
+                                <td className="px-6 py-4 text-right">
 
                                     <button
                                         onClick={() =>
-                                            handleDelete(
-                                                review.id
-                                            )
+                                            handleDelete(review.id)
                                         }
-                                        className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700"
+                                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 border border-red-100 hover:bg-red-50 hover:border-red-200 transition-all"
                                     >
+
+                                            <span>
+                                                🗑
+                                            </span>
+
                                         Delete
+
                                     </button>
 
                                 </td>
@@ -466,24 +655,44 @@ const ReviewManagement = () => {
 
                 {filteredReviews.length === 0 && (
 
-                    <div className="text-center py-12">
+                    <div className="text-center py-16">
 
-                        <div className="text-5xl mb-3">
+                        <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl">
+
                             ⭐
+
                         </div>
 
-                        <h2 className="text-xl font-semibold">
+
+                        <h2 className="text-xl font-bold text-slate-800 mt-5">
+
                             No reviews found
+
                         </h2>
 
-                        <p className="text-gray-500 mt-1">
+
+                        <p className="text-slate-500 mt-2">
 
                             {search
-                                ? "No reviews match your search."
-                                : "There are no reviews available yet."
+                                ? "No reviews match your search criteria."
+                                : "There are no performance reviews available yet."
                             }
 
                         </p>
+
+
+                        {search && (
+
+                            <button
+                                onClick={() => setSearch("")}
+                                className="mt-5 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+                            >
+
+                                Clear search
+
+                            </button>
+
+                        )}
 
                     </div>
 

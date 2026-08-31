@@ -122,9 +122,6 @@ const ManagerManagement = () => {
 
       const token = localStorage.getItem("token");
 
-      // ======================================
-      // EDIT MANAGER
-      // ======================================
 
       if (editingManager) {
 
@@ -148,13 +145,7 @@ const ManagerManagement = () => {
 
         alert("Manager updated successfully");
 
-      }
-
-          // ======================================
-          // CREATE MANAGER
-      // ======================================
-
-      else {
+      } else {
 
         await axios.post(
             "http://localhost:8080/api/managers",
@@ -174,7 +165,6 @@ const ManagerManagement = () => {
 
 
       resetForm();
-
       fetchManagers();
 
     } catch (error) {
@@ -299,20 +289,26 @@ const ManagerManagement = () => {
           HEADER
       ====================================== */}
 
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 
           <div>
 
-            <p className="text-blue-600 font-medium">
-              Administration
-            </p>
+            <div className="flex items-center gap-2 mb-2">
 
-            <h1 className="text-3xl font-bold text-gray-900">
+              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+
+              <p className="text-blue-600 text-sm font-semibold tracking-wide uppercase">
+                Administration
+              </p>
+
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               Manager Management
             </h1>
 
-            <p className="text-gray-500 mt-1">
-              Create and manage managers in your organization.
+            <p className="text-gray-500 mt-2">
+              Create, organize and manage managers across your organization.
             </p>
 
           </div>
@@ -320,9 +316,10 @@ const ManagerManagement = () => {
 
           <button
               onClick={handleAddManager}
-              className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700 active:scale-[0.98] transition-all font-medium shadow-sm"
           >
-            + Add Manager
+            <span className="text-lg leading-none">+</span>
+            Add Manager
           </button>
 
         </div>
@@ -332,16 +329,20 @@ const ManagerManagement = () => {
           SEARCH
       ====================================== */}
 
-        <div className="bg-white p-4 rounded-xl shadow-sm border">
+        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
 
           <div className="relative">
 
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+
             <input
                 type="text"
-                placeholder="Search by name, code, email or department..."
+                placeholder="Search by name, manager code, email or department..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-gray-300 p-3 pl-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-200 bg-gray-50 p-3 pl-11 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
             />
 
           </div>
@@ -350,219 +351,26 @@ const ManagerManagement = () => {
 
 
         {/* ======================================
-          FORM
-      ====================================== */}
-
-        {showForm && (
-
-            <div className="bg-white p-6 rounded-xl shadow-sm border">
-
-              <div className="flex justify-between items-center mb-6">
-
-                <div>
-
-                  <h2 className="text-xl font-semibold text-gray-900">
-
-                    {editingManager
-                        ? "Edit Manager"
-                        : "Add New Manager"}
-
-                  </h2>
-
-                  <p className="text-sm text-gray-500 mt-1">
-
-                    {editingManager
-                        ? "Update manager information."
-                        : "Create a manager profile and login account."}
-
-                  </p>
-
-                </div>
-
-              </div>
-
-
-              <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-5"
-              >
-
-
-                {/* MANAGER CODE */}
-
-                <div>
-
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Manager Code
-                  </label>
-
-                  <input
-                      name="managerCode"
-                      placeholder="Example: MGR001"
-                      value={formData.managerCode}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                  />
-
-                </div>
-
-
-                {/* FIRST NAME */}
-
-                <div>
-
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    First Name
-                  </label>
-
-                  <input
-                      name="firstName"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                  />
-
-                </div>
-
-
-                {/* LAST NAME */}
-
-                <div>
-
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Name
-                  </label>
-
-                  <input
-                      name="lastName"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                  />
-
-                </div>
-
-
-                {/* EMAIL */}
-
-                <div>
-
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-
-                  <input
-                      type="email"
-                      name="email"
-                      placeholder="manager@example.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                  />
-
-                </div>
-
-
-                {/* DEPARTMENT */}
-
-                <div>
-
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Department
-                  </label>
-
-                  <input
-                      name="department"
-                      placeholder="Example: IT"
-                      value={formData.department}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                  />
-
-                </div>
-
-
-                {/* PASSWORD */}
-
-                {!editingManager && (
-
-                    <div>
-
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Login Password
-                      </label>
-
-                      <input
-                          type="password"
-                          name="password"
-                          placeholder="Create login password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                      />
-
-                      <p className="text-xs text-gray-500 mt-1">
-                        The manager will use this password to login.
-                      </p>
-
-                    </div>
-
-                )}
-
-
-                {/* BUTTONS */}
-
-                <div className="md:col-span-2 flex gap-3 pt-2">
-
-                  <button
-                      type="submit"
-                      className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-medium"
-                  >
-
-                    {editingManager
-                        ? "Update Manager"
-                        : "Create Manager"}
-
-                  </button>
-
-
-                  <button
-                      type="button"
-                      onClick={resetForm}
-                      className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium"
-                  >
-                    Cancel
-                  </button>
-
-                </div>
-
-              </form>
-
-            </div>
-
-        )}
-
-
-        {/* ======================================
           MANAGER COUNT
       ====================================== */}
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
 
-          <h2 className="text-xl font-semibold text-gray-900">
-            Managers
-          </h2>
+          <div>
 
-          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-          {filteredManagers.length} Managers
+            <h2 className="text-xl font-semibold text-gray-900">
+              All Managers
+            </h2>
+
+            <p className="text-sm text-gray-500 mt-1">
+              View and manage all registered managers.
+            </p>
+
+          </div>
+
+
+          <span className="inline-flex items-center w-fit bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-full text-sm font-semibold">
+          {filteredManagers.length} Manager{filteredManagers.length !== 1 ? "s" : ""}
         </span>
 
         </div>
@@ -572,162 +380,169 @@ const ManagerManagement = () => {
           MANAGER TABLE
       ====================================== */}
 
-        <div className="bg-white rounded-xl shadow-sm border overflow-x-auto">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
-          <table className="w-full min-w-[850px]">
+          <div className="overflow-x-auto">
 
-            <thead className="bg-gray-50">
+            <table className="w-full min-w-[850px]">
 
-            <tr>
+              <thead className="bg-gray-50 border-b border-gray-200">
 
-              <th className="text-left p-4 text-sm font-semibold text-gray-600">
-                Code
-              </th>
+              <tr>
 
-              <th className="text-left p-4 text-sm font-semibold text-gray-600">
-                Manager
-              </th>
+                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Code
+                </th>
 
-              <th className="text-left p-4 text-sm font-semibold text-gray-600">
-                Email
-              </th>
+                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Manager
+                </th>
 
-              <th className="text-left p-4 text-sm font-semibold text-gray-600">
-                Department
-              </th>
+                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Email
+                </th>
 
-              <th className="text-left p-4 text-sm font-semibold text-gray-600">
-                Actions
-              </th>
+                <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Department
+                </th>
 
-            </tr>
+                <th className="text-right px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Actions
+                </th>
 
-            </thead>
+              </tr>
 
-
-            <tbody>
-
-            {filteredManagers.map((manager) => (
-
-                <tr
-                    key={manager.id}
-                    className="border-t hover:bg-gray-50 transition"
-                >
+              </thead>
 
 
-                  {/* CODE */}
+              <tbody className="divide-y divide-gray-100">
 
-                  <td className="p-4">
+              {filteredManagers.map((manager) => (
 
-                  <span className="bg-gray-100 px-3 py-1 rounded-md text-sm font-medium">
-                    {manager.managerCode}
-                  </span>
+                  <tr
+                      key={manager.id}
+                      className="hover:bg-blue-50/30 transition-colors"
+                  >
 
-                  </td>
+
+                    {/* CODE */}
+
+                    <td className="px-6 py-4">
+
+                    <span className="inline-flex bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide">
+                      {manager.managerCode}
+                    </span>
+
+                    </td>
 
 
-                  {/* NAME */}
+                    {/* NAME */}
 
-                  <td className="p-4">
+                    <td className="px-6 py-4">
 
-                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
 
-                      <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
 
-                        {manager.firstName
-                            ?.charAt(0)
-                            .toUpperCase()}
+                          {manager.firstName
+                              ?.charAt(0)
+                              .toUpperCase()}
+
+                        </div>
+
+
+                        <div>
+
+                          <p className="font-semibold text-gray-900">
+                            {manager.firstName}{" "}
+                            {manager.lastName}
+                          </p>
+
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            Manager
+                          </p>
+
+                        </div>
 
                       </div>
 
-                      <div>
+                    </td>
 
-                        <p className="font-semibold text-gray-900">
 
-                          {manager.firstName}{" "}
-                          {manager.lastName}
+                    {/* EMAIL */}
 
-                        </p>
+                    <td className="px-6 py-4">
 
-                        <p className="text-xs text-gray-500">
-                          Manager
-                        </p>
+                      <p className="text-sm text-gray-600">
+                        {manager.email}
+                      </p>
+
+                    </td>
+
+
+                    {/* DEPARTMENT */}
+
+                    <td className="px-6 py-4">
+
+                    <span className="inline-flex bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-full text-xs font-medium">
+                      {manager.department}
+                    </span>
+
+                    </td>
+
+
+                    {/* ACTIONS */}
+
+                    <td className="px-6 py-4">
+
+                      <div className="flex justify-end gap-2">
+
+                        <button
+                            onClick={() => handleEdit(manager)}
+                            className="px-3 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition"
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                            onClick={() => handleDelete(manager.id)}
+                            className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 transition"
+                        >
+                          Delete
+                        </button>
 
                       </div>
 
-                    </div>
+                    </td>
 
-                  </td>
+                  </tr>
 
+              ))}
 
-                  {/* EMAIL */}
+              </tbody>
 
-                  <td className="p-4 text-gray-600">
-                    {manager.email}
-                  </td>
+            </table>
 
-
-                  {/* DEPARTMENT */}
-
-                  <td className="p-4">
-
-                  <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
-                    {manager.department}
-                  </span>
-
-                  </td>
-
-
-                  {/* ACTIONS */}
-
-                  <td className="p-4">
-
-                    <div className="flex gap-2">
-
-                      <button
-                          onClick={() =>
-                              handleEdit(manager)
-                          }
-                          className="bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition text-sm"
-                      >
-                        Edit
-                      </button>
-
-
-                      <button
-                          onClick={() =>
-                              handleDelete(manager.id)
-                          }
-                          className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition text-sm"
-                      >
-                        Delete
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-            ))}
-
-            </tbody>
-
-          </table>
+          </div>
 
 
           {/* NO RESULTS */}
 
           {filteredManagers.length === 0 && (
 
-              <div className="py-12 text-center">
+              <div className="py-16 text-center">
 
-                <div className="text-4xl mb-3">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center text-2xl">
                   👥
                 </div>
 
-                <p className="text-gray-500">
-                  No managers found.
+                <h3 className="font-semibold text-gray-900">
+                  No managers found
+                </h3>
+
+                <p className="text-sm text-gray-500 mt-1">
+                  Try adjusting your search or create a new manager.
                 </p>
 
               </div>
@@ -735,6 +550,254 @@ const ManagerManagement = () => {
           )}
 
         </div>
+
+
+        {/* ======================================
+          CREATE / EDIT MANAGER MODAL
+      ====================================== */}
+
+        {showForm && (
+
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+
+              {/* BACKDROP */}
+
+              <div
+                  className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={resetForm}
+              ></div>
+
+
+              {/* MODAL */}
+
+              <div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+
+                {/* MODAL HEADER */}
+
+                <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+
+                  <div className="flex items-center gap-3">
+
+                    <div className="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+
+                      {editingManager ? "✏️" : "👨‍💼"}
+
+                    </div>
+
+
+                    <div>
+
+                      <h2 className="text-xl font-bold text-gray-900">
+
+                        {editingManager
+                            ? "Edit Manager"
+                            : "Create New Manager"}
+
+                      </h2>
+
+                      <p className="text-sm text-gray-500 mt-1">
+
+                        {editingManager
+                            ? "Update the manager information below."
+                            : "Add manager details and create their login account."}
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  {/* CLOSE */}
+
+                  <button
+                      type="button"
+                      onClick={resetForm}
+                      className="w-9 h-9 rounded-lg hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition flex items-center justify-center text-2xl"
+                  >
+                    ×
+                  </button>
+
+                </div>
+
+
+                {/* FORM */}
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="p-6"
+                >
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+
+                    {/* MANAGER CODE */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Manager Code
+                      </label>
+
+                      <input
+                          name="managerCode"
+                          placeholder="Example: MGR001"
+                          value={formData.managerCode}
+                          onChange={handleChange}
+                          className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                          required
+                      />
+
+                    </div>
+
+
+                    {/* DEPARTMENT */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Department
+                      </label>
+
+                      <input
+                          name="department"
+                          placeholder="Example: Engineering"
+                          value={formData.department}
+                          onChange={handleChange}
+                          className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                          required
+                      />
+
+                    </div>
+
+
+                    {/* FIRST NAME */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        First Name
+                      </label>
+
+                      <input
+                          name="firstName"
+                          placeholder="Enter first name"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                          required
+                      />
+
+                    </div>
+
+
+                    {/* LAST NAME */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Last Name
+                      </label>
+
+                      <input
+                          name="lastName"
+                          placeholder="Enter last name"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                          required
+                      />
+
+                    </div>
+
+
+                    {/* EMAIL */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address
+                      </label>
+
+                      <input
+                          type="email"
+                          name="email"
+                          placeholder="manager@company.com"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                          required
+                      />
+
+                    </div>
+
+
+                    {/* PASSWORD */}
+
+                    {!editingManager && (
+
+                        <div>
+
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Login Password
+                          </label>
+
+                          <input
+                              type="password"
+                              name="password"
+                              placeholder="Create a secure password"
+                              value={formData.password}
+                              onChange={handleChange}
+                              className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl outline-none transition focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+                              required
+                          />
+
+                          <p className="text-xs text-gray-400 mt-2">
+                            The manager will use this password to access their account.
+                          </p>
+
+                        </div>
+
+                    )}
+
+                  </div>
+
+
+                  {/* BUTTONS */}
+
+                  <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+
+                    <button
+                        type="button"
+                        onClick={resetForm}
+                        className="px-6 py-3 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition font-medium"
+                    >
+                      Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 active:scale-[0.98] transition font-medium shadow-sm"
+                    >
+
+                      {editingManager
+                          ? "Save Changes"
+                          : "Create Manager"}
+
+                    </button>
+
+                  </div>
+
+                </form>
+
+              </div>
+
+            </div>
+
+        )}
 
       </div>
   );
