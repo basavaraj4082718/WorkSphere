@@ -18,7 +18,7 @@ const ManagerLeaveRequests = () => {
     };
 
     // =====================================================
-    // FETCH LEAVES
+    // FETCH ONLY LOGGED-IN MANAGER'S TEAM LEAVES
     // =====================================================
 
     const fetchLeaves = async () => {
@@ -27,7 +27,7 @@ const ManagerLeaveRequests = () => {
             setError("");
 
             const response = await axios.get(
-                "http://localhost:8080/api/leaves/all",
+                "http://localhost:8080/api/leaves/manager/me",
                 config
             );
 
@@ -69,6 +69,7 @@ const ManagerLeaveRequests = () => {
             );
 
             await fetchLeaves();
+
         } catch (error) {
             console.log(error);
 
@@ -102,6 +103,7 @@ const ManagerLeaveRequests = () => {
             );
 
             await fetchLeaves();
+
         } catch (error) {
             console.log(error);
 
@@ -234,8 +236,8 @@ const ManagerLeaveRequests = () => {
         <div className="space-y-8">
 
             {/* =====================================================
-          HERO SECTION
-      ===================================================== */}
+                HERO SECTION
+            ===================================================== */}
 
             <section className="relative overflow-hidden rounded-3xl bg-slate-950 px-6 py-8 md:px-10 md:py-10">
 
@@ -252,8 +254,8 @@ const ManagerLeaveRequests = () => {
                             <span className="h-2 w-2 rounded-full bg-amber-400"></span>
 
                             <span className="text-xs font-medium text-indigo-300">
-                Leave Management
-              </span>
+                                Leave Management
+                            </span>
 
                         </div>
 
@@ -280,10 +282,9 @@ const ManagerLeaveRequests = () => {
 
             </section>
 
-
             {/* =====================================================
-          SECTION HEADER
-      ===================================================== */}
+                SECTION HEADER
+            ===================================================== */}
 
             <div>
 
@@ -301,14 +302,11 @@ const ManagerLeaveRequests = () => {
 
             </div>
 
-
             {/* =====================================================
-          STATISTICS
-      ===================================================== */}
+                STATISTICS
+            ===================================================== */}
 
             <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-
-                {/* TOTAL */}
 
                 <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl">
 
@@ -339,7 +337,7 @@ const ManagerLeaveRequests = () => {
                         <div className="mt-6 border-t border-slate-100 pt-4">
 
                             <p className="text-xs text-slate-400">
-                                All leave requests
+                                Team leave requests
                             </p>
 
                         </div>
@@ -347,7 +345,6 @@ const ManagerLeaveRequests = () => {
                     </div>
 
                 </div>
-
 
                 {/* PENDING */}
 
@@ -389,7 +386,6 @@ const ManagerLeaveRequests = () => {
 
                 </div>
 
-
                 {/* APPROVED */}
 
                 <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl">
@@ -429,7 +425,6 @@ const ManagerLeaveRequests = () => {
                     </div>
 
                 </div>
-
 
                 {/* REJECTED */}
 
@@ -473,10 +468,9 @@ const ManagerLeaveRequests = () => {
 
             </section>
 
-
             {/* =====================================================
-          SEARCH + FILTER
-      ===================================================== */}
+                SEARCH + FILTER
+            ===================================================== */}
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
 
@@ -484,9 +478,9 @@ const ManagerLeaveRequests = () => {
 
                     <div className="relative flex-1">
 
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              ⌕
-            </span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            ⌕
+                        </span>
 
                         <input
                             type="text"
@@ -497,7 +491,6 @@ const ManagerLeaveRequests = () => {
                         />
 
                     </div>
-
 
                     <select
                         value={statusFilter}
@@ -527,10 +520,9 @@ const ManagerLeaveRequests = () => {
 
             </section>
 
-
             {/* =====================================================
-          LEAVE REQUEST TABLE
-      ===================================================== */}
+                LEAVE REQUEST TABLE
+            ===================================================== */}
 
             <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
 
@@ -543,7 +535,7 @@ const ManagerLeaveRequests = () => {
                         </h2>
 
                         <p className="mt-1 text-sm text-slate-500">
-                            Review and manage employee leave applications.
+                            Review and manage your team's leave applications.
                         </p>
 
                     </div>
@@ -553,7 +545,6 @@ const ManagerLeaveRequests = () => {
                     </div>
 
                 </div>
-
 
                 <div className="overflow-x-auto">
 
@@ -586,7 +577,6 @@ const ManagerLeaveRequests = () => {
                         </tr>
 
                         </thead>
-
 
                         <tbody className="divide-y divide-slate-100">
 
@@ -627,7 +617,6 @@ const ManagerLeaveRequests = () => {
 
                                 </td>
 
-
                                 {/* DURATION */}
 
                                 <td className="px-6 py-5">
@@ -646,7 +635,6 @@ const ManagerLeaveRequests = () => {
 
                                 </td>
 
-
                                 {/* REASON */}
 
                                 <td className="max-w-xs px-6 py-5">
@@ -657,21 +645,19 @@ const ManagerLeaveRequests = () => {
 
                                 </td>
 
-
                                 {/* STATUS */}
 
                                 <td className="px-6 py-5">
 
-                    <span
-                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyle(
-                            leave.status
-                        )}`}
-                    >
-                      {leave.status}
-                    </span>
+                                        <span
+                                            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyle(
+                                                leave.status
+                                            )}`}
+                                        >
+                                            {leave.status}
+                                        </span>
 
                                 </td>
-
 
                                 {/* ACTIONS */}
 
@@ -694,7 +680,6 @@ const ManagerLeaveRequests = () => {
                                                     ? "Processing..."
                                                     : "Approve"}
                                             </button>
-
 
                                             <button
                                                 onClick={() =>
@@ -730,7 +715,6 @@ const ManagerLeaveRequests = () => {
 
                 </div>
 
-
                 {/* EMPTY STATE */}
 
                 {filteredLeaves.length === 0 && (
@@ -749,7 +733,7 @@ const ManagerLeaveRequests = () => {
 
                             {search || statusFilter !== "ALL"
                                 ? "No leave requests match your current search or filter."
-                                : "There are currently no leave requests waiting for review."}
+                                : "There are currently no leave requests from your team waiting for review."}
 
                         </p>
 

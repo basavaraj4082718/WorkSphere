@@ -1,6 +1,5 @@
 package com.track.controller;
 
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -21,79 +20,76 @@ import com.track.service.EmployeeService;
 
 import jakarta.validation.Valid;
 
-
-
 @RestController
 @RequestMapping("/api/employees")
 @Validated
 public class EmloyeeController {
-	
+
 	private final EmployeeService employeeService;
-	
+
 	public EmloyeeController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<EmployeeResponseDto> createEmployee(@Valid @RequestBody EmployeeRequestDto requestDto){
-		EmployeeResponseDto employee = employeeService.createEmployee(requestDto);
-		
+	public ResponseEntity<EmployeeResponseDto> createEmployee(
+			@Valid @RequestBody EmployeeRequestDto requestDto) {
+
+		EmployeeResponseDto employee =
+				employeeService.createEmployee(requestDto);
+
 		return new ResponseEntity<>(employee, HttpStatus.CREATED);
-		
 	}
-	
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<EmployeeResponseDto> getEmployeeByID(@PathVariable Long id){
-		
-		 EmployeeResponseDto employee =  employeeService.getEmployeeById(id);
-		 
-		 return ResponseEntity.ok(employee);
-		
-	}
-	
-	
-	@GetMapping
-	public ResponseEntity<List<EmployeeResponseDto>> getAllEmloyess(){
-		List<EmployeeResponseDto> employee = employeeService.getAllEmployees();
-		
+	public ResponseEntity<EmployeeResponseDto> getEmployeeByID(
+			@PathVariable Long id) {
+
+		EmployeeResponseDto employee =
+				employeeService.getEmployeeById(id);
+
 		return ResponseEntity.ok(employee);
-		
 	}
-	
-	 @PutMapping("/{id}")
-	    public ResponseEntity<EmployeeResponseDto> updateEmployee(
-	            @PathVariable Long id,
-	            @Valid @RequestBody EmployeeRequestDto requestDto) {
 
-	        EmployeeResponseDto updatedEmployee =
-	                employeeService.updateEmployee(id, requestDto);
+	@GetMapping
+	public ResponseEntity<List<EmployeeResponseDto>> getAllEmloyess() {
 
-	        return ResponseEntity.ok(updatedEmployee);
-	    }
+		List<EmployeeResponseDto> employee =
+				employeeService.getAllEmployees();
 
-	    @DeleteMapping("/{id}")
-	    public ResponseEntity<String> deleteEmployee(
-	            @PathVariable Long id) {
+		return ResponseEntity.ok(employee);
+	}
 
-	        employeeService.deleteEmployee(id);
+	@PutMapping("/{id}")
+	public ResponseEntity<EmployeeResponseDto> updateEmployee(
+			@PathVariable Long id,
+			@RequestBody EmployeeRequestDto requestDto) {
 
-	        return ResponseEntity.ok("Employee deleted successfully");
-	    }
-	    
-	    @PutMapping("/{employeeId}/assign-manager/{managerId}")
-	    public ResponseEntity<EmployeeResponseDto> assignManager(
-	            @PathVariable Long employeeId,
-	            @PathVariable Long managerId) {
+		EmployeeResponseDto updatedEmployee =
+				employeeService.updateEmployee(id, requestDto);
 
-	        return ResponseEntity.ok(
-	                employeeService.assignManager(
-	                        employeeId,
-	                        managerId
-	                )
-	        );
-	    }
-	
-	
+		return ResponseEntity.ok(updatedEmployee);
+	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteEmployee(
+			@PathVariable Long id) {
+
+		employeeService.deleteEmployee(id);
+
+		return ResponseEntity.ok("Employee deleted successfully");
+	}
+
+	@PutMapping("/{employeeId}/assign-manager/{managerId}")
+	public ResponseEntity<EmployeeResponseDto> assignManager(
+			@PathVariable Long employeeId,
+			@PathVariable Long managerId) {
+
+		return ResponseEntity.ok(
+				employeeService.assignManager(
+						employeeId,
+						managerId
+				)
+		);
+	}
 }

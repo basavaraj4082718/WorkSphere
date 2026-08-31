@@ -10,24 +10,32 @@ import com.track.dto.LeaveRequestDto;
 import com.track.dto.LeaveResponseDto;
 import com.track.entity.Employee;
 import com.track.entity.LeaveRequest;
+import com.track.entity.Manager;
 import com.track.enums.LeaveStatus;
 import com.track.repository.EmployeeRepository;
 import com.track.repository.LeaveRequestRepository;
-import com.track.service.LeaveService;
+import com.track.repository.ManagerRepository;
 
 @Service
 public class LeaveServiceImpl implements LeaveService {
 
     private final LeaveRequestRepository leaveRepository;
     private final EmployeeRepository employeeRepository;
+    private final ManagerRepository managerRepository;
 
     public LeaveServiceImpl(
             LeaveRequestRepository leaveRepository,
-            EmployeeRepository employeeRepository) {
+            EmployeeRepository employeeRepository,
+            ManagerRepository managerRepository) {
 
         this.leaveRepository = leaveRepository;
         this.employeeRepository = employeeRepository;
+        this.managerRepository = managerRepository;
     }
+
+    // =====================================================
+    // APPLY LEAVE
+    // =====================================================
 
     @Override
     public LeaveResponseDto applyLeave(
@@ -45,9 +53,7 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setStartDate(requestDto.getStartDate());
         leave.setEndDate(requestDto.getEndDate());
         leave.setReason(requestDto.getReason());
-
         leave.setAppliedDate(LocalDate.now());
-
         leave.setStatus(LeaveStatus.PENDING);
 
         LeaveRequest savedLeave =
@@ -55,6 +61,10 @@ public class LeaveServiceImpl implements LeaveService {
 
         return mapToDto(savedLeave);
     }
+
+    // =====================================================
+    // APPROVE LEAVE
+    // =====================================================
 
     @Override
     public LeaveResponseDto approveLeave(
@@ -74,6 +84,10 @@ public class LeaveServiceImpl implements LeaveService {
         return mapToDto(updatedLeave);
     }
 
+    // =====================================================
+    // REJECT LEAVE
+    // =====================================================
+
     @Override
     public LeaveResponseDto rejectLeave(
             Long leaveId) {
@@ -92,6 +106,10 @@ public class LeaveServiceImpl implements LeaveService {
         return mapToDto(updatedLeave);
     }
 
+    // =====================================================
+    // GET EMPLOYEE LEAVES
+    // =====================================================
+
     @Override
     public List<LeaveResponseDto> getEmployeeLeaves(
             Long employeeId) {
@@ -103,6 +121,10 @@ public class LeaveServiceImpl implements LeaveService {
                 .collect(Collectors.toList());
     }
 
+    // =====================================================
+    // GET ALL LEAVES - ADMIN
+    // =====================================================
+
     @Override
     public List<LeaveResponseDto> getAllLeaves() {
 
@@ -112,6 +134,31 @@ public class LeaveServiceImpl implements LeaveService {
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
+
+    // =====================================================
+    // GET LOGGED-IN MANAGER TEAM LEAVES
+    // =====================================================
+
+    @Override
+    public List<LeaveResponseDto> getManagerTeamLeaves(
+            String managerEmail) {
+
+        Manager manager = managerRepository
+                .findByEmail(managerEmail)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Manager not found"));
+
+        return leaveRepository
+                .findByEmployeeManagerId(manager.getId())
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    // =====================================================
+    // MAP ENTITY TO DTO
+    // =====================================================
 
     private LeaveResponseDto mapToDto(
             LeaveRequest leave) {

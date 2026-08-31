@@ -16,4 +16,6 @@ public interface LeaveService {
     List<LeaveResponseDto> getEmployeeLeaves(Long employeeId);
 
     List<LeaveResponseDto> getAllLeaves();
+
+    List<LeaveResponseDto> getManagerTeamLeaves(String managerEmail);
 }

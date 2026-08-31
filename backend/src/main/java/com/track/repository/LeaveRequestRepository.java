@@ -13,4 +13,6 @@ public interface LeaveRequestRepository
     List<LeaveRequest> findByEmployeeId(Long employeeId);
 
     List<LeaveRequest> findByStatus(LeaveStatus status);
+
+    List<LeaveRequest> findByEmployeeManagerId(Long managerId);
 }

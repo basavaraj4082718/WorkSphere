@@ -3,7 +3,9 @@ package com.track.controller;
 import com.track.dto.ManagerRequestDto;
 import com.track.dto.ManagerResponseDto;
 import com.track.service.ManagerService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +29,10 @@ public class ManagerController {
         ManagerResponseDto response =
                 managerService.createManager(requestDto);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping
@@ -50,7 +55,7 @@ public class ManagerController {
     @PutMapping("/{id}")
     public ResponseEntity<ManagerResponseDto> updateManager(
             @PathVariable Long id,
-            @Valid @RequestBody ManagerRequestDto requestDto) {
+            @RequestBody ManagerRequestDto requestDto) {
 
         return ResponseEntity.ok(
                 managerService.updateManager(id, requestDto)
@@ -63,6 +68,8 @@ public class ManagerController {
 
         managerService.deleteManager(id);
 
-        return ResponseEntity.ok("Manager deleted successfully");
+        return ResponseEntity.ok(
+                "Manager deleted successfully"
+        );
     }
 }

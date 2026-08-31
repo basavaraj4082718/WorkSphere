@@ -29,7 +29,6 @@ public class EmployeeServiceImp implements EmployeeService {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public EmployeeServiceImp(
             EmployeeRepository employeeRepository,
             ManagerRepository managerRepository,
@@ -45,7 +44,6 @@ public class EmployeeServiceImp implements EmployeeService {
         this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
 
     // =========================================================
     // CREATE EMPLOYEE
@@ -77,9 +75,6 @@ public class EmployeeServiceImp implements EmployeeService {
                     "A user with this email already exists");
         }
 
-
-        // CREATE USER
-
         User user = new User();
 
         user.setName(
@@ -96,12 +91,8 @@ public class EmployeeServiceImp implements EmployeeService {
 
         user.setRole(Role.EMPLOYEE);
 
-
         User savedUser =
                 userRepository.save(user);
-
-
-        // CREATE EMPLOYEE
 
         Employee employee = new Employee();
 
@@ -125,14 +116,11 @@ public class EmployeeServiceImp implements EmployeeService {
 
         employee.setUser(savedUser);
 
-
         Employee savedEmployee =
                 employeeRepository.save(employee);
 
-
         return mapToResponseDto(savedEmployee);
     }
-
 
     // =========================================================
     // GET EMPLOYEE BY ID
@@ -151,20 +139,19 @@ public class EmployeeServiceImp implements EmployeeService {
         return mapToResponseDto(employee);
     }
 
-
     // =========================================================
-    // GET ALL EMPLOYEES
+    // GET ALL EMPLOYEES - SORTED BY EMPLOYEE CODE ASCENDING
     // =========================================================
 
     @Override
     public List<EmployeeResponseDto> getAllEmployees() {
 
-        return employeeRepository.findAll()
+        return employeeRepository
+                .findAllByOrderByEmployeeCodeAsc()
                 .stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
     }
-
 
     // =========================================================
     // UPDATE EMPLOYEE
@@ -182,7 +169,6 @@ public class EmployeeServiceImp implements EmployeeService {
                                 new RuntimeException(
                                         "Employee not found with id: "
                                                 + id));
-
 
         employee.setEmployeeCode(
                 requestDto.getEmployeeCode());
@@ -202,9 +188,6 @@ public class EmployeeServiceImp implements EmployeeService {
         employee.setDesignation(
                 requestDto.getDesignation());
 
-
-        // UPDATE USER DETAILS
-
         User user = employee.getUser();
 
         if (user != null) {
@@ -217,7 +200,6 @@ public class EmployeeServiceImp implements EmployeeService {
             user.setEmail(
                     requestDto.getEmail());
 
-
             if (requestDto.getPassword() != null
                     && !requestDto.getPassword().isBlank()) {
 
@@ -229,13 +211,11 @@ public class EmployeeServiceImp implements EmployeeService {
             userRepository.save(user);
         }
 
-
         Employee updatedEmployee =
                 employeeRepository.save(employee);
 
         return mapToResponseDto(updatedEmployee);
     }
-
 
     // =========================================================
     // DELETE EMPLOYEE
@@ -252,42 +232,19 @@ public class EmployeeServiceImp implements EmployeeService {
                                         "Employee not found with id: "
                                                 + id));
 
-
-        // Store user before deleting employee
         User user = employee.getUser();
-
-
-        // ==========================================
-        // 1. DELETE EMPLOYEE REVIEWS
-        // ==========================================
 
         reviewRepository.deleteByEmployeeId(id);
 
-
-        // ==========================================
-        // 2. DELETE EMPLOYEE TASKS
-        // ==========================================
-
         taskRepository.deleteByEmployeeId(id);
 
-
-        // ==========================================
-        // 3. DELETE EMPLOYEE
-        // ==========================================
-
         employeeRepository.delete(employee);
-
-
-        // ==========================================
-        // 4. DELETE EMPLOYEE LOGIN USER
-        // ==========================================
 
         if (user != null) {
 
             userRepository.delete(user);
         }
     }
-
 
     // =========================================================
     // ASSIGN MANAGER
@@ -319,7 +276,6 @@ public class EmployeeServiceImp implements EmployeeService {
         return mapToResponseDto(savedEmployee);
     }
 
-
     // =========================================================
     // MAP RESPONSE DTO
     // =========================================================
@@ -329,7 +285,6 @@ public class EmployeeServiceImp implements EmployeeService {
 
         Long managerId = null;
         String managerName = null;
-
 
         if (employee.getManager() != null) {
 
@@ -341,7 +296,6 @@ public class EmployeeServiceImp implements EmployeeService {
                             + " "
                             + employee.getManager().getLastName();
         }
-
 
         return new EmployeeResponseDto(
                 employee.getId(),

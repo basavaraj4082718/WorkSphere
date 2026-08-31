@@ -28,7 +28,6 @@ public class ManagerServiceImpl implements ManagerService {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public ManagerServiceImpl(
             ManagerRepository managerRepository,
             EmployeeRepository employeeRepository,
@@ -44,7 +43,6 @@ public class ManagerServiceImpl implements ManagerService {
         this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
 
     // =========================================================
     // CREATE MANAGER
@@ -62,7 +60,6 @@ public class ManagerServiceImpl implements ManagerService {
                     "Manager code already exists");
         }
 
-
         if (managerRepository.existsByEmail(
                 requestDto.getEmail())) {
 
@@ -70,16 +67,12 @@ public class ManagerServiceImpl implements ManagerService {
                     "Manager email already exists");
         }
 
-
         if (userRepository.findByEmail(
                 requestDto.getEmail()).isPresent()) {
 
             throw new RuntimeException(
                     "A user with this email already exists");
         }
-
-
-        // CREATE MANAGER
 
         Manager manager = new Manager();
 
@@ -98,12 +91,8 @@ public class ManagerServiceImpl implements ManagerService {
         manager.setDepartment(
                 requestDto.getDepartment());
 
-
         Manager savedManager =
                 managerRepository.save(manager);
-
-
-        // CREATE LOGIN USER
 
         User user = new User();
 
@@ -121,27 +110,24 @@ public class ManagerServiceImpl implements ManagerService {
 
         user.setRole(Role.MANAGER);
 
-
         userRepository.save(user);
-
 
         return mapToResponseDto(savedManager);
     }
 
-
     // =========================================================
-    // GET ALL MANAGERS
+    // GET ALL MANAGERS - SORTED BY MANAGER CODE ASCENDING
     // =========================================================
 
     @Override
     public List<ManagerResponseDto> getAllManagers() {
 
-        return managerRepository.findAll()
+        return managerRepository
+                .findAllByOrderByManagerCodeAsc()
                 .stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
     }
-
 
     // =========================================================
     // GET MANAGER BY ID
@@ -159,7 +145,6 @@ public class ManagerServiceImpl implements ManagerService {
         return mapToResponseDto(manager);
     }
 
-
     // =========================================================
     // UPDATE MANAGER
     // =========================================================
@@ -176,7 +161,6 @@ public class ManagerServiceImpl implements ManagerService {
                                 new RuntimeException(
                                         "Manager not found"));
 
-
         manager.setManagerCode(
                 requestDto.getManagerCode());
 
@@ -192,14 +176,11 @@ public class ManagerServiceImpl implements ManagerService {
         manager.setDepartment(
                 requestDto.getDepartment());
 
-
         Manager updatedManager =
                 managerRepository.save(manager);
 
-
         return mapToResponseDto(updatedManager);
     }
-
 
     // =========================================================
     // DELETE MANAGER
@@ -215,31 +196,11 @@ public class ManagerServiceImpl implements ManagerService {
                                 new RuntimeException(
                                         "Manager not found"));
 
-
-        // ==========================================
-        // 1. REMOVE MANAGER FROM ASSIGNED EMPLOYEES
-        // ==========================================
-
         employeeRepository.removeManagerFromEmployees(id);
-
-
-        // ==========================================
-        // 2. DELETE MANAGER'S REVIEWS
-        // ==========================================
 
         reviewRepository.deleteByManagerId(id);
 
-
-        // ==========================================
-        // 3. DELETE MANAGER'S TASKS
-        // ==========================================
-
         taskRepository.deleteByManagerId(id);
-
-
-        // ==========================================
-        // 4. DELETE MANAGER LOGIN USER
-        // ==========================================
 
         User user =
                 userRepository.findByEmail(
@@ -247,18 +208,11 @@ public class ManagerServiceImpl implements ManagerService {
                         .orElse(null);
 
         if (user != null) {
-
             userRepository.delete(user);
         }
 
-
-        // ==========================================
-        // 5. DELETE MANAGER
-        // ==========================================
-
         managerRepository.delete(manager);
     }
-
 
     // =========================================================
     // MAP RESPONSE DTO
@@ -291,4 +245,3 @@ public class ManagerServiceImpl implements ManagerService {
         return responseDto;
     }
 }
-
